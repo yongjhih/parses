@@ -1,0 +1,23 @@
+{
+  "name": "parses",
+  "version": "1.0.0",
+  "description": "Parse Utils",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yongjhih/parses"
+  },
+  "license": "Apache",
+  "dependencies": {
+    "parse": "~1.8.0",
+    "rx": "~4.1.0",
+    "commander": "~2.9.0"
+  },
+  "scripts": {
+    "msg2tags": "node msg2tags.js",
+    "emails": "node emails.js"
+  },
+  "engines": {
+    "node": ">=4.3"
+  }
+}
