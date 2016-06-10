@@ -110,7 +110,7 @@ all(query).doOnNext(function(post) {
       }
     });
   }).concatMap(function (tag) {
-    return fetch(tag); // is necessary for save, TODO move up save(tag).concatMap(tag -> fetch(tag));
+    return fetch(tag); // it's necessary after tag saving, TODO move up save(tag).concatMap(tag -> fetch(tag));
   }).doOnNext(function (tag) {
     console.log(tag);
   }).toArray().filter(function (it) {
