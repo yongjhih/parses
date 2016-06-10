@@ -79,63 +79,18 @@ query.ascending('createdAt'); // required for all(Parse.Query)
 //var Post = Parse.Object.extend('Post');
 query.include('tagList');
 
-all(query).doOnNext(function(post) {
-  console.log('before: ');
-  console.log(post);
-  console.log(post.get('message'));
-  console.log(post.get('tagList'));
-  //var tags = post.get('tagList');
-  //for (var i = 0; i < tags.length; ++i) {
-    //console.log(tags[i].hashtag);
-  //}
-}).concatMap(function (post) {
+all(query).concatMap(function (post) {
   var msg = post.get('message');
   if (!msg) return Rx.Observable.empty();
+  //var tokens = msg.match(/\#([\u4E00–\u9FCC\u3400–\u4DB5\uFA0E\uFA0F\uFA11\uFA13\uFA14\uFA1F\uFA21\uFA23\uFA24\uFA27-\uFA29]|[\ud840-\ud868][\udc00-\udfff]|\ud869[\udc00-\uded6\udf00-\udfff]|[\ud86a-\ud86c][\udc00-\udfff]|\ud86d[\udc00-\udf34\udf40-\udfff]|\ud86e[\udc00-\udc1d])+/g);
+  //var tokens = msg.match(/\#([^\u0000-\u007F]|[\w_-])+/g);
+  //var tokens = msg.match(/\#([\u2FF0-\u2FFF]|[\w_-])+/g);
   var tokens = msg.match(/\#([^\u3000-\u303F。，\s]|[\w_-])+/g);
-  return tokens ? Rx.Observable.from(tokens).concatMap(function (token) {
-    var tagQuery = new Parse.Query('Tag');
-    tagQuery.equalTo('hashtag', token);
 
-    return Rx.Observable.fromPromise(tagQuery.first()).defaultIfEmpty(null).concatMap(function (tag) { // simulate switchIfEmpty(Rx.Observable)
-      if (!tag) {
-        var t = new Tag(); // for default
-        t.set('type', 'hashtag');
-        t.set('hashtag', token);
-        console.log('token: ' + token);
-        console.log('tag: ' + t);
-        console.log(t);
-        return save(t);
-      } else {
-        return Rx.Observable.just(tag);
-      }
-    });
-  }).concatMap(function (tag) {
-    return fetch(tag); // is necessary for save, TODO move up save(tag).concatMap(tag -> fetch(tag));
-  }).doOnNext(function (tag) {
-    console.log(tag);
-  }).toArray().filter(function (it) {
-    return it.length > 0;
-  }).concatMap(function (tags) {
-    console.log(tags);
-    for (var i = 0; i < tags.length; ++i) {
-      console.log("add(): " + tags[i].hashtag);
-      post.addUnique('tagList', tags[i]); // addUnique(key, item)
-    }
-    //post.addUnique('tagList', tags); // addUnique(key, array) has been tested, it's not expected
-    console.log("add(): " + post);
-    console.log(post);
-    console.log(post.get('tagList'));
-    return save(post);
-  }) : Rx.Observable.empty();
-}).doOnNext(function (post) {
-  console.log('after:');
-  console.log(post);
-  console.log(post.get('taglist'));
-  console.log('after: ' + post.get('tagList'));
-  console.log('---');
-}).subscribe(function (it) {}, function (e) {
-  console.log(e);
-});
+  return tokens ? Rx.Observable.from(tokens).doOnNext(function (token) {
+    console.log(msg + ':= ' + token);
+}) : Rx.Observable.empty();
+}).subscribe();
 //}).subscribe();
 
 /**
