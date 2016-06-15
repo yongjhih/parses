@@ -28,7 +28,7 @@ $ ./emails.js --appId fff --jsKey fff --masterKey fff
 
 ```sh
 $ npm install
-$ ./emails.js -p
+$ ./emails.js --production # default 'dev'
 ```
 
 ## LICENSE
