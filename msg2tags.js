@@ -22,12 +22,13 @@ program
   //.option('--since <SINCE>', 'A Unix timestamp or strtotime data value that points to the start of the range of time-based data')
   //.option('--until <UNTIL>', 'A Unix timestamp or strtotime data value that points to the end of the range of time-based data')
   //.option('--location', 'sync only location posts')
-  //.option('-u, --user <USER>', 'User\'s object ID')
+  .option('-u, --user <USER>', 'Specifiy user id')
   .parse(process.argv);
 
 var appId = program.appId ? program.appId : process.env.APP_ID;
 var jsKey = program.jsKey ? program.jsKey : process.env.JS_KEY;
 var masterKey = program.masterKey ? program.masterKey : process.env.MASTER_KEY;
+var user = program.user ? program.user : process.env.PARSE_USER;
 
 console.log(hasFile(configPath));
 if (config) {
@@ -78,6 +79,10 @@ query.notEqualTo("message", "");
 query.ascending('createdAt'); // required for all(Parse.Query)
 //var Post = Parse.Object.extend('Post');
 query.include('tagList');
+
+if (user) {
+  query.equalTo("user", user);
+}
 
 all(query).doOnNext(function(post) {
   console.log('before: ');
