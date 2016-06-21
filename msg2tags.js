@@ -165,10 +165,17 @@ function all(query) {
   });
 }
 
+/**
+ * @param {Parse.Query} query
+ */
 function find(query) {
   return Rx.Observable.fromPromise(query.find());
 }
 
+/**
+ * @param {Parse.Query} query
+ * @param {String} id
+ */
 function get(query, id) {
   return Rx.Observable.fromPromise(query.get(id));
 }
