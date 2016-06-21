@@ -80,11 +80,15 @@ query.ascending('createdAt'); // required for all(Parse.Query)
 //var Post = Parse.Object.extend('Post');
 query.include('tagList');
 
+var allObs = all(query);
 if (user) {
-  query.equalTo("user", user);
+  allObs = get(new Parse.Query(Parse.User), user).flatMap(function (user) {
+    query.equalTo('user', user);
+    return all(query);
+  });
 }
 
-all(query).doOnNext(function(post) {
+allObs.doOnNext(function(post) {
   console.log('before: ');
   console.log(post);
   console.log(post.get('message'));
@@ -159,6 +163,14 @@ function all(query) {
   }).distinct(function (it) {
     return it.id;
   });
+}
+
+function find(query) {
+  return Rx.Observable.fromPromise(query.find());
+}
+
+function get(query, id) {
+  return Rx.Observable.fromPromise(query.get(id));
 }
 
 /**
