@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-var Parse = require('parse/node').Parse; // for parse
-var Rx = require('rx'); // for rx
+var Parse = require('parse/node').Parse;
+var Rx = require('rx');
 var configPath = process.env.HOME + '/.parse/' + 'config.json'; // $ docker-parse list 8tory_dev
 var config = hasFile(configPath) ? require(configPath) : null;
-var program = require('commander'); // for cli args
+var program = require('commander');
 var Tag = Parse.Object.extend('Tag');
 var Post = Parse.Object.extend('Post');
 
@@ -30,15 +30,12 @@ var jsKey = program.jsKey ? program.jsKey : process.env.JS_KEY;
 var masterKey = program.masterKey ? program.masterKey : process.env.MASTER_KEY;
 var user = program.user ? program.user : process.env.PARSE_USER;
 
-console.log(hasFile(configPath));
 if (config) {
   if (program.production) {
-    console.warn('production');
     appId     = appId ? appId : config.production.appId;
     jsKey     = jsKey ? jsKey : config.production.jsKey;
     masterKey = masterKey ? masterKey : config.production.masterKey;
   } else {
-    console.warn('dev');
     appId     = appId ? appId : config.dev.appId;
     jsKey     = jsKey ? jsKey : config.dev.jsKey;
     masterKey = masterKey ? masterKey : config.dev.masterKey;
@@ -71,13 +68,10 @@ Parse.Cloud.useMasterKey();
 //   }
 // }
 //
-
 var query = new Parse.Query("Post");
-//query.equalTo("isMainPost", true);
 query.equalTo("source", "Fb");
 query.notEqualTo("message", "");
-query.ascending('createdAt'); // required for all(Parse.Query)
-//var Post = Parse.Object.extend('Post');
+query.ascending('createdAt');
 query.include('tagList');
 
 var allObs = all(query);
@@ -88,16 +82,7 @@ if (user) {
   });
 }
 
-allObs.doOnNext(function(post) {
-  console.log('before: ');
-  console.log(post);
-  console.log(post.get('message'));
-  console.log(post.get('tagList'));
-  //var tags = post.get('tagList');
-  //for (var i = 0; i < tags.length; ++i) {
-    //console.log(tags[i].hashtag);
-  //}
-}).concatMap(function (post) {
+allObs.concatMap(function (post) {
   var msg = post.get('message');
   if (!msg) return Rx.Observable.empty();
   var tokens = msg.match(/\#([^\u3000-\u303F。，\s]|[\w_-])+/g);
@@ -110,9 +95,6 @@ allObs.doOnNext(function(post) {
         var t = new Tag(); // for default
         t.set('type', 'hashtag');
         t.set('hashtag', token);
-        console.log('token: ' + token);
-        console.log('tag: ' + t);
-        console.log(t);
         return save(t);
       } else {
         return Rx.Observable.just(tag);
@@ -120,32 +102,16 @@ allObs.doOnNext(function(post) {
     });
   }).concatMap(function (tag) {
     return fetch(tag); // it's necessary after tag saving, TODO move up save(tag).concatMap(tag -> fetch(tag));
-  }).doOnNext(function (tag) {
-    console.log(tag);
   }).toArray().filter(function (it) {
     return it.length > 0;
   }).concatMap(function (tags) {
-    console.log(tags);
     for (var i = 0; i < tags.length; ++i) {
-      console.log("add(): " + tags[i].hashtag);
       post.addUnique('tagList', tags[i]); // addUnique(key, item)
     }
-    //post.addUnique('tagList', tags); // addUnique(key, array) has been tested, it's not expected
-    console.log("add(): " + post);
-    console.log(post);
-    console.log(post.get('tagList'));
     return save(post);
   }) : Rx.Observable.empty();
 }).doOnNext(function (post) {
-  console.log('after:');
-  console.log(post);
-  console.log(post.get('taglist'));
-  console.log('after: ' + post.get('tagList'));
-  console.log('---');
-}).subscribe(function (it) {}, function (e) {
-  console.log(e);
-});
-//}).subscribe();
+}).subscribe();
 
 /**
  * Require `query.ascending('createdAt')` and did not set limit(), please use Rx.Observable.take() instead.
@@ -196,28 +162,6 @@ function save(parseObject) {
   return Rx.Observable.fromPromise(parseObject.save()).map(function (it) {
     return parseObject;
   }).defaultIfEmpty(parseObject);
-}
-
-function testSaveTagIntoPost() {
-  var q = new Parse.Query("Post");
-  q.equalTo("objectId", "gpJQW0ZOgD");
-  q.include("tagList");
-  all(q).concatMap(function (post) {
-    var q2 = new Parse.Query("Tag");
-    q2.equalTo("objectId", "dCUztbH1jG");
-    return all(q2).concatMap(function (tag) {
-      console.log(post);
-      console.log(post.get('tagList'));
-      post.add('tagList', tag);
-      console.log(post.get('tagList'));
-      //return save(post);
-      return Rx.Observable.fromPromise(post.save());
-    });
-  }).subscribe(function (it) {
-    console.log(it);
-  }, function (e) {
-    console.log(e);
-  });
 }
 
 function hasFile(f) {
