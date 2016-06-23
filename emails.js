@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-var Parse = require('parse/node').Parse; // for parse
-var Rx = require('rx'); // for rx
+var Parse = require('parse/node').Parse;
+var Rx = require('rx');
 var configPath = process.env.HOME + '/.parse/' + 'config.json'; // $ docker-parse list 8tory_dev
 var config = hasFile(configPath) ? require(configPath) : null;
-var program = require('commander'); // for cli args
+var program = require('commander');
 
 program
   .version('1.0.0')
@@ -12,15 +12,6 @@ program
   .option('-a, --appId <appId>', 'appId')
   .option('-j, --jsKey <jsKey>', 'jsKey')
   .option('-m, --masterKey <masterKey>', 'masterKey')
-  //.option('-d, --debug', 'Show debug messages')
-  //.option('-i, --info', 'Show info only')
-  //.option('-vv, --verbose', 'Show more messages')
-  //.option('--years_ago <YEARS_AGO>', 'sync <YEARS_AGO> today 00:00:00 in user\'s timezone')
-  //.option('--days <DAYS>', 'sync <DAYS> from <YEARS_AGO>')
-  //.option('--since <SINCE>', 'A Unix timestamp or strtotime data value that points to the start of the range of time-based data')
-  //.option('--until <UNTIL>', 'A Unix timestamp or strtotime data value that points to the end of the range of time-based data')
-  //.option('--location', 'sync only location posts')
-  //.option('-u, --user <USER>', 'User\'s object ID')
   .parse(process.argv);
 
 var appId = program.appId ? program.appId : process.env.APP_ID;
