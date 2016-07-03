@@ -20,6 +20,7 @@ program
   //.option('--until <UNTIL>', 'A Unix timestamp or strtotime data value that points to the end of the range of time-based data')
   //.option('--location', 'sync only location posts')
   .option('-g, --group <group>', 'Specifiy group id')
+  .option('--url <url>', 'Specifiy parse api url')
   .parse(process.argv);
 
 var appId = program.appId ? program.appId : process.env.APP_ID;
@@ -39,14 +40,16 @@ console.log(jsKey);
 console.log(masterKey);
 console.log(program.group);
 console.log(program.token);
+console.log(program.url);
 Parse.initialize(appId, jsKey, masterKey);
+if (program.url) Parse.serverURL = program.url;
 Parse.Cloud.useMasterKey();
 
 //require('es6-promise').polyfill();
 //var Fetch = require('isomorphic-fetch');
 var RxFacebook = require('rx-facebook');
 
-RxFacebook.Members(program.group, program.token).take(1000).flatMap(function (member) {
+RxFacebook.Members(program.group, program.token).take(50).flatMap(function (member) {
   return getFbUserByFbId(member.id).flatMap(function (fbUser) {
     console.log("save group" + program.group);
     fbUser.addUnique("groups", program.group);
@@ -63,11 +66,17 @@ RxFacebook.Members(program.group, program.token).take(1000).flatMap(function (me
 });
 
 function getFbUserByFbId(fbid) {
+  Parse.Cloud.useMasterKey();
   console.log("getFbUserByFbId: " + fbid);
+  console.log(1);
   var FbUser = Parse.Object.extend("FbUser");
+  console.log(2);
   var query = new Parse.Query(FbUser);
+  console.log(3);
   query.equalTo("fbid", fbid);
+  console.log(4);
   return Rx.Observable.fromPromise(query.first()).map(function (user) {
+    console.log(5);
     return (user != null) ? user : new FbUser();
   }).defaultIfEmpty(new FbUser());
 }
