@@ -2,8 +2,6 @@
 
 var Parse = require('parse/node').Parse;
 var Rx = require('rx');
-var configPath = process.env.HOME + '/.parse/' + 'config.json'; // $ docker-parse list 8tory_dev
-var config = hasFile(configPath) ? require(configPath) : null;
 var program = require('commander');
 
 program
@@ -29,20 +27,6 @@ var jsKey = program.jsKey ? program.jsKey : process.env.JS_KEY;
 var masterKey = program.masterKey ? program.masterKey : process.env.MASTER_KEY;
 var user = program.user ? program.user : process.env.PARSE_USER;
 
-if (config) {
-  if (program.production) {
-    appId     = appId ? appId : config.production.appId;
-    jsKey     = jsKey ? jsKey : config.production.jsKey;
-    masterKey = masterKey ? masterKey : config.production.masterKey;
-  } else {
-    appId     = appId ? appId : config.dev.appId;
-    jsKey     = jsKey ? jsKey : config.dev.jsKey;
-    masterKey = masterKey ? masterKey : config.dev.masterKey;
-  }
-} else {
-  console.warn('missing ' + configPath);
-}
-
 // TODO fatal error and exit
 if (!appId) console.error('missing appId');
 if (!jsKey) console.error('missing jsKey');
@@ -50,7 +34,13 @@ if (!masterKey) console.error('missing masterKey');
 if (!program.token) console.error('missing token');
 if (!program.group) console.error('missing group');
 
+console.log(appId);
+console.log(jsKey);
+console.log(masterKey);
+console.log(program.group);
+console.log(program.token);
 Parse.initialize(appId, jsKey, masterKey);
+Parse.Cloud.useMasterKey();
 
 //require('es6-promise').polyfill();
 //var Fetch = require('isomorphic-fetch');
@@ -58,7 +48,6 @@ var RxFacebook = require('rx-facebook');
 
 RxFacebook.Members(program.group, program.token).take(1000).flatMap(function (member) {
   return getFbUserByFbId(member.id).flatMap(function (fbUser) {
-    Parse.Cloud.useMasterKey();
     console.log("save group" + program.group);
     fbUser.addUnique("groups", program.group);
     fbUser.set("fbid", member.id);
@@ -74,7 +63,6 @@ RxFacebook.Members(program.group, program.token).take(1000).flatMap(function (me
 });
 
 function getFbUserByFbId(fbid) {
-  Parse.Cloud.useMasterKey();
   console.log("getFbUserByFbId: " + fbid);
   var FbUser = Parse.Object.extend("FbUser");
   var query = new Parse.Query(FbUser);
