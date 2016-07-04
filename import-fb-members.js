@@ -82,17 +82,19 @@ Parse.Cloud.useMasterKey();
 //var Fetch = require('isomorphic-fetch');
 var RxFacebook = require('rx-facebook');
 
-RxFacebook.Members(group, token).take(32).flatMap(function (member) {
+RxFacebook.Members(group, token).flatMap(function (member) {
   return getFbUserByFbId(member.id).flatMap(function (fbUser) {
-    fbUser.addUnique("groups", program.group);
+    fbUser.addUnique("groups", group);
     fbUser.set("fbid", member.id);
     fbUser.set("name", member.name);
     fbUser.set("administrator", member.administrator);
     return Rx.Observable.fromPromise(fbUser.save()); // target, new or update
+  }).doOnNext(function (it) {
+    console.log(it);
   });
 })
 .subscribe(function (it) {
-  console.log(it);
+  //console.log(it);
 }, function (e) {
   console.log(e);
 });
