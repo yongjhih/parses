@@ -3,6 +3,7 @@
 var Parse = require('parse/node').Parse;
 var Rx = require('rx');
 var program = require('commander');
+var Parses = require('./parses');
 
 program
   .version('1.0.0')
@@ -68,7 +69,7 @@ if (masterKey) Parse.Cloud.useMasterKey();
 
 var Clazz = Parse.Object.extend(clazz);
 var query = new Parse.Query(Clazz);
-removeAll(query).subscribe(function (it) {
+Parses.removeAll(query).subscribe(function (it) {
   console.log(it);
 });
 
@@ -84,67 +85,4 @@ function hasFile(f) {
   return b;
 }
 
-function removeAll(parseQuery) {
-  return all(parseQuery).concatMap(function (parseObject) {
-    return parseObject.destroy({});
-  });
-}
-
-/**
- * Required unset limit(), please use Rx.Observable.take() instead.
- * @param {Parse.Query} query
- */
-function all(query) {
-  return allAsc(query);
-}
-
-function allAsc(query) {
-  var chunkSize = 100;
-  query.ascending('createdAt');
-  return Rx.Observable.fromPromise(query.find()).concatMap(function (posts) {
-    if (posts.length == chunkSize) {
-      var q = query.greaterThanOrEqualTo('createdAt', posts[posts.length - 1].get('createdAt'));
-      return Rx.Observable.concat(Rx.Observable.from(posts), all(q));
-    } else {
-      return Rx.Observable.from(posts);
-    }
-  }).distinct(function (it) {
-    return it.id;
-  });
-}
-
-function allDesc(query) {
-  var chunkSize = 100;
-  query.descending('createdAt');
-  return Rx.Observable.fromPromise(query.find()).concatMap(function (posts) {
-    if (posts.length == chunkSize) {
-      var q = query.lessThanOrEqualTo('createdAt', posts[posts.length - 1].get('createdAt'));
-      return Rx.Observable.concat(Rx.Observable.from(posts), all(q));
-    } else {
-      return Rx.Observable.from(posts);
-    }
-  }).distinct(function (it) {
-    return it.id;
-  });
-}
-
-/**
- * @param {Parse.Object} parseObject
- */
-function fetch(parseObject) {
-  return Rx.Observable.fromPromise(parseObject.fetch()).map(function (it) {
-    return parseObject;
-  }).defaultIfEmpty(parseObject);
-}
-
-/**
- * @param {Parse.Object} parseObject
- */
-function save(parseObject) {
-  return Rx.Observable.fromPromise(parseObject.save()).map(function (it) {
-    return parseObject;
-  }).defaultIfEmpty(parseObject);
-}
-
 /* vim: set sw=2: */
-
