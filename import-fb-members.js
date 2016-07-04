@@ -61,11 +61,25 @@ if (program.dryrun) {
 }
 
 // TODO fatal error and exit
-if (!appId) console.error('missing appId');
-if (!jsKey) console.error('missing jsKey');
-if (!masterKey) console.error('missing masterKey');
-if (!token) console.error('missing token');
-if (!group) console.error('missing group');
+if (!appId) {
+  console.error('missing appId');
+  process.exit();
+}
+if (!jsKey) {
+  console.error('missing jsKey');
+  process.exit();
+}
+if (!masterKey) {
+  console.error('missing masterKey');
+}
+if (!token) {
+  console.error('missing token');
+  process.exit();
+}
+if (!group) {
+  console.error('missing group');
+  process.exit();
+}
 //if (!url) console.error('missing server url');
 
 console.log(appId);
