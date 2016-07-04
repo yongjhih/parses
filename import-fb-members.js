@@ -3,6 +3,7 @@
 var Parse = require('parse/node').Parse;
 var Rx = require('rx');
 var program = require('commander');
+var Parses = require('./parses');
 
 program
   .version('1.0.0')
@@ -30,7 +31,7 @@ var jsKey = program.jsKey ? program.jsKey : process.env.JS_KEY;
 var masterKey = program.masterKey ? program.masterKey : process.env.MASTER_KEY;
 var user = program.user ? program.user : process.env.PARSE_USER;
 var url = program.url;
-var groups = program.groups;
+var groups = (program.groups) ? groups.split(",") : null;
 var token = program.token;
 
 var configPath = program.config;
@@ -97,9 +98,8 @@ Parse.Cloud.useMasterKey();
 //require('es6-promise').polyfill();
 //var Fetch = require('isomorphic-fetch');
 var RxFacebook = require('rx-facebook');
-var groupsJson = require('./a7-verified-groups.json');
 
-Rx.Observable.from(groupsJson).map(function (group) { return group.id; })
+Rx.Observable.from()
   .concatMap(function (group) {
     return RxFacebook.Members(group, token)
       .concatMap(function (member) {
@@ -108,11 +108,11 @@ Rx.Observable.from(groupsJson).map(function (group) { return group.id; })
           fbUser.addUnique("groups", group);
           fbUser.set("fbid", member.id);
           fbUser.set("name", member.name);
-          return save(fbUser); // target, new or update
+          return Parses.save(fbUser); // target, new or update
         }).concatMap(function (fbUser) {
           fbUser.remove("groups", null);
           fbUser.remove("groups", "null");
-          return save(fbUser);
+          return Parses.save(fbUser);
         }).doOnNext(function (it) {
           console.log(it);
         });
@@ -146,68 +146,6 @@ function hasFile(f) {
   } catch (e) {
   }
   return b;
-}
-
-function removeAll(parseQuery) {
-  return all(parseQuery).concatMap(function (parseObject) {
-    return parseObject.destroy({});
-  });
-}
-
-/**
- * Require `query.ascending('createdAt')` and did not set limit(), please use Rx.Observable.take() instead.
- * @param {Parse.Query} query
- */
-function all(query) {
-  return allAsc(query);
-}
-
-function allAsc(query) {
-  var chunkSize = 100;
-  query.ascending('createdAt');
-  return Rx.Observable.fromPromise(query.find()).concatMap(function (posts) {
-    if (posts.length == chunkSize) {
-      var q = query.greaterThanOrEqualTo('createdAt', posts[posts.length - 1].get('createdAt'));
-      return Rx.Observable.concat(Rx.Observable.from(posts), all(q));
-    } else {
-      return Rx.Observable.from(posts);
-    }
-  }).distinct(function (it) {
-    return it.id;
-  });
-}
-
-function allDesc(query) {
-  var chunkSize = 100;
-  query.descending('createdAt');
-  return Rx.Observable.fromPromise(query.find()).concatMap(function (posts) {
-    if (posts.length == chunkSize) {
-      var q = query.lessThanOrEqualTo('createdAt', posts[posts.length - 1].get('createdAt'));
-      return Rx.Observable.concat(Rx.Observable.from(posts), all(q));
-    } else {
-      return Rx.Observable.from(posts);
-    }
-  }).distinct(function (it) {
-    return it.id;
-  });
-}
-
-/**
- * @param {Parse.Object} parseObject
- */
-function fetch(parseObject) {
-  return Rx.Observable.fromPromise(parseObject.fetch()).map(function (it) {
-    return parseObject;
-  }).defaultIfEmpty(parseObject);
-}
-
-/**
- * @param {Parse.Object} parseObject
- */
-function save(parseObject) {
-  return Rx.Observable.fromPromise(parseObject.save()).map(function (it) {
-    return parseObject;
-  }).defaultIfEmpty(parseObject);
 }
 
 /* vim: set sw=2: */
