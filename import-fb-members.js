@@ -84,7 +84,6 @@ var RxFacebook = require('rx-facebook');
 
 RxFacebook.Members(group, token).take(32).flatMap(function (member) {
   return getFbUserByFbId(member.id).flatMap(function (fbUser) {
-    console.log("save group" + program.group);
     fbUser.addUnique("groups", program.group);
     fbUser.set("fbid", member.id);
     fbUser.set("name", member.name);
@@ -99,19 +98,12 @@ RxFacebook.Members(group, token).take(32).flatMap(function (member) {
 });
 
 function getFbUserByFbId(fbid) {
-  console.log("getFbUserByFbId: " + fbid);
-  console.log(1);
   var FbUser = Parse.Object.extend("FbUser");
-  console.log(2);
   var query = new Parse.Query(FbUser);
-  console.log(3);
   query.equalTo("fbid", fbid);
-  console.log(4);
   return Rx.Observable.fromPromise(query.first()).catch(function (e) {
-    console.log(e);
     return Rx.Observable.just(new FbUser());
   }).map(function (user) {
-    console.log(5);
     return (user != null) ? user : new FbUser();
   }).defaultIfEmpty(new FbUser());
 }
