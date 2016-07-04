@@ -4,6 +4,7 @@ var Parse = require('parse/node').Parse;
 var Rx = require('rx');
 var program = require('commander');
 var Parses = require('./parses');
+require('./rx.distincts');
 
 program
   .version('1.0.0')
@@ -13,8 +14,8 @@ program
   .option('-m, --masterKey <masterKey>', 'masterKey')
   .option('--url <url>', 'Specifiy parse api url')
   .option('-f, --config <config>', 'Specifiy config path')
-  .option('-c, --class <clazz>', 'Specifiy class')
-  .option('-k, --columns <columns>', 'Specifiy columns')
+  .option('-c, --clazz <clazz>', 'Specifiy class')
+  .option('-k, --column <column>', 'Specifiy column')
   .option('--dryrun', 'Dryrun')
   .parse(process.argv);
 
@@ -22,9 +23,10 @@ var appId = program.appId ? program.appId : process.env.APP_ID;
 var jsKey = program.jsKey ? program.jsKey : process.env.JS_KEY;
 var masterKey = program.masterKey ? program.masterKey : process.env.MASTER_KEY;
 var user = program.user ? program.user : process.env.PARSE_USER;
+var dryrun = program.dryrun;
 var url = program.url;
 var clazz = program.clazz;
-var columns = program.columns;
+var column = program.column;
 
 var configPath = program.config;
 var config = hasFile(configPath) ? require(configPath) : null;
@@ -44,11 +46,6 @@ if (config) {
   }
 }
 
-if (program.dryrun) {
-  console.log(configJson);
-  process.exit();
-}
-
 // TODO fatal error and exit
 if (!appId) {
   console.error('missing appId');
@@ -60,6 +57,11 @@ if (!jsKey) {
 }
 if (!clazz) {
   console.error('missing clazz');
+  process.exit();
+}
+if (!column) {
+  console.error('missing column');
+  process.exit();
 }
 console.log(appId);
 console.log(jsKey);
@@ -71,10 +73,12 @@ if (masterKey) Parse.Cloud.useMasterKey();
 
 var Clazz = Parse.Object.extend(clazz);
 var query = new Parse.Query(Clazz);
-Parses.removeDup(query, function (it) {
-  return it.get(columns);
+Parses.all(query).distincts(function (it) {
+  return it.get(column);
+}, null, function (it) {
+  console.log(it.get(column) + " duplicated");
+  if (!dryrun) it.destroy({});
 }).subscribe(function (it) {
-  console.log(it);
 });
 
 function hasFile(f) {

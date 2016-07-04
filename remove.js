@@ -13,7 +13,7 @@ program
   .option('-m, --masterKey <masterKey>', 'masterKey')
   .option('--url <url>', 'Specifiy parse api url')
   .option('-f, --config <config>', 'Specifiy config path')
-  .option('-c, --class <clazz>', 'Specifiy class')
+  .option('-c, --clazz <clazz>', 'Specifiy class')
   .option('--dryrun', 'Dryrun')
   .parse(process.argv);
 
