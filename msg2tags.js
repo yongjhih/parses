@@ -2,8 +2,6 @@
 
 var Parse = require('parse/node').Parse;
 var Rx = require('rx');
-var configPath = process.env.HOME + '/.parse/' + 'config.json'; // $ docker-parse list 8tory_dev
-var config = hasFile(configPath) ? require(configPath) : null;
 var program = require('commander');
 var Tag = Parse.Object.extend('Tag');
 var Post = Parse.Object.extend('Post');
@@ -23,12 +21,16 @@ program
   //.option('--until <UNTIL>', 'A Unix timestamp or strtotime data value that points to the end of the range of time-based data')
   //.option('--location', 'sync only location posts')
   .option('-u, --user <USER>', 'Specifiy user id')
+  .option('-f, --config <config>', 'Specifiy config path')
   .parse(process.argv);
 
 var appId = program.appId ? program.appId : process.env.APP_ID;
 var jsKey = program.jsKey ? program.jsKey : process.env.JS_KEY;
 var masterKey = program.masterKey ? program.masterKey : process.env.MASTER_KEY;
 var user = program.user ? program.user : process.env.PARSE_USER;
+
+var configPath = program.config ? program.config : process.env.HOME + '/.parse/' + 'config.json'; // $ docker-parse list 8tory_dev
+var config = hasFile(configPath) ? require(configPath) : null;
 
 if (config) {
   if (program.production) {
@@ -51,7 +53,7 @@ if (!masterKey) console.error('missing masterKey');
 
 Parse.initialize(appId, jsKey, masterKey);
 
-Parse.Cloud.useMasterKey();
+if (masterKey) Parse.Cloud.useMasterKey();
 
 // We should use message_tags from Facebook, not parse message field that's prefix with #
 //
