@@ -11,7 +11,7 @@ function Parses() {
  * @param {Parse.Query} query
  */
 function all(query) {
-  return allAsc(query);
+  return allDesc(query);
 }
 Parses.all = all;
 
@@ -98,13 +98,11 @@ function removeDup(parseQuery, keySelector) {
 }
 Parses.removeDup = removeDup;
 
-function removeDupColumn(parseQuery, column) {
-  return all(parseQuery).distincts(function (it) {
+function removeDupByColumn(parseQuery, column) {
+  return removeDup(parseQuery, function (it) {
     return it.get(column);
-  }, null, function (it) {
-    it.destroy({});
   });
 }
-Parses.removeDupColumn = removeDupColumn;
+Parses.removeDupByColumn = removeDupByColumn;
 
 /* vim: set sw=2: */

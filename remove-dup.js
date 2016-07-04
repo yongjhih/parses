@@ -16,14 +16,14 @@ program
   .option('-f, --config <config>', 'Specifiy config path')
   .option('-c, --clazz <clazz>', 'Specifiy class')
   .option('-k, --column <column>', 'Specifiy column')
-  .option('--dryrun', 'Dryrun')
+  .option('-D, --nodryrun', 'No dryrun')
   .parse(process.argv);
 
 var appId = program.appId ? program.appId : process.env.APP_ID;
 var jsKey = program.jsKey ? program.jsKey : process.env.JS_KEY;
 var masterKey = program.masterKey ? program.masterKey : process.env.MASTER_KEY;
 var user = program.user ? program.user : process.env.PARSE_USER;
-var dryrun = program.dryrun;
+var nodryrun = program.nodryrun;
 var url = program.url;
 var clazz = program.clazz;
 var column = program.column;
@@ -77,7 +77,12 @@ Parses.all(query).distincts(function (it) {
   return it.get(column);
 }, null, function (it) {
   console.log(it.get(column) + " duplicated");
-  if (!dryrun) it.destroy({});
+  if (nodryrun) {
+    console.log("nodryrun");
+    //it.destroy({});
+  } else {
+    console.log("dryrun");
+  }
 }).subscribe(function (it) {
 });
 

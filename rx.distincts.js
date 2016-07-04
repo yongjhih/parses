@@ -94,9 +94,9 @@
     return retValue;
   };
 
-  var DistinctObservable = (function (__super__) {
-    inherits(DistinctObservable, __super__);
-    function DistinctObservable(source, keyFn, cmpFn, onDistFn) {
+  var DistinctsObservable = (function (__super__) {
+    inherits(DistinctsObservable, __super__);
+    function DistinctsObservable(source, keyFn, cmpFn, onDistFn) {
       this.source = source;
       this._keyFn = keyFn;
       this._cmpFn = cmpFn;
@@ -104,16 +104,16 @@
       __super__.call(this);
     }
 
-    DistinctObservable.prototype.subscribeCore = function (o) {
-      return this.source.subscribe(new DistinctObserver(o, this._keyFn, this._cmpFn, this._onDistFn));
+    DistinctsObservable.prototype.subscribeCore = function (o) {
+      return this.source.subscribe(new DistinctsObserver(o, this._keyFn, this._cmpFn, this._onDistFn));
     };
 
-    return DistinctObservable;
+    return DistinctsObservable;
   }(ObservableBase));
 
-  var DistinctObserver = (function (__super__) {
-    inherits(DistinctObserver, __super__);
-    function DistinctObserver(o, keyFn, cmpFn, onDistFn) {
+  var DistinctsObserver = (function (__super__) {
+    inherits(DistinctsObserver, __super__);
+    function DistinctsObserver(o, keyFn, cmpFn, onDistFn) {
       this._o = o;
       this._keyFn = keyFn;
       this._h = new HashSet(cmpFn);
@@ -121,7 +121,7 @@
       __super__.call(this);
     }
 
-    DistinctObserver.prototype.next = function (x) {
+    DistinctsObserver.prototype.next = function (x) {
       var key = x;
       if (isFunction(this._keyFn)) {
         key = tryCatch(this._keyFn)(x);
@@ -131,16 +131,16 @@
       if (indist) {
         this._o.onNext(x);
       } else {
-        if (typeof _onDistFn === 'function') {
-          _onDistFn(x);
+        if (this._onDistFn) {
+          this._onDistFn(x);
         }
       }
     };
 
-    DistinctObserver.prototype.error = function (e) { this._o.onError(e); };
-    DistinctObserver.prototype.completed = function () { this._o.onCompleted(); };
+    DistinctsObserver.prototype.error = function (e) { this._o.onError(e); };
+    DistinctsObserver.prototype.completed = function () { this._o.onCompleted(); };
 
-    return DistinctObserver;
+    return DistinctsObserver;
   }(AbstractObserver));
 
   /**
@@ -158,7 +158,7 @@
   observableProto.distincts = function (keySelector, comparer, onDistinctor) {
     comparer || (comparer = defaultComparer);
     onDistinctor || (onDistinctor = function (x) {});
-    return new DistinctObservable(this, keySelector, comparer, onDistinctor);
+    return new DistinctsObservable(this, keySelector, comparer, onDistinctor);
   };
 
   return Rx;
