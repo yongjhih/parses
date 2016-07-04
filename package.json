@@ -2,7 +2,7 @@
   "name": "parses",
   "version": "1.0.0",
   "description": "Parse Utils",
-  "main": "index.js",
+  "main": "parses.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/yongjhih/parses"
