@@ -4,7 +4,6 @@ var Parse = require('parse/node').Parse;
 var Rx = require('rx');
 var program = require('commander');
 var Parses = require('./parses');
-require('./rx.distincts');
 
 program
   .version('1.0.0')
@@ -72,10 +71,8 @@ if (masterKey) Parse.Cloud.useMasterKey();
 
 var Clazz = Parse.Object.extend(clazz);
 var query = new Parse.Query(Clazz);
-Parses.all(query).distincts(function (it) {
+Parses.removeDup(query, function (it) {
   return it.get(columns);
-}, null, function (it) {
-  it.destroy({});
 }).subscribe(function (it) {
   console.log(it);
 });
