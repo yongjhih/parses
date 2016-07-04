@@ -2,6 +2,7 @@
 
 var Parse = require('parse/node').Parse;
 var Rx = require('rx');
+require('./rx.distincts');
 var program = require('commander');
 
 program
@@ -72,6 +73,8 @@ var Clazz = Parse.Object.extend(clazz);
 var query = new Parse.Query(Clazz);
 all(query).distinct(function (it) {
   return it.get(columns);
+}, null, function (it) {
+  it.destroy({});
 }).subscribe(function (it) {
   console.log(it);
 });
