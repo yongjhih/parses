@@ -5,6 +5,7 @@ var Rx = require('rx');
 var configPath = process.env.HOME + '/.parse/' + 'config.json'; // $ docker-parse list 8tory_dev
 var config = hasFile(configPath) ? require(configPath) : null;
 var program = require('commander');
+var Parses = require('./parses');
 
 program
   .version('1.0.0')
@@ -41,45 +42,9 @@ Parse.initialize(appId, jsKey, masterKey);
 
 var query = new Parse.Query("User");
 
-all(query).doOnNext(function(user) {
+Parses.all(query).doOnNext(function(user) {
   console.log(user.get('email'));
 }).subscribe();
-
-/**
- * Require `query.ascending('createdAt')` and did not set limit(), please use Rx.Observable.take() instead.
- * @param {Parse.Query} query
- */
-function all(query) {
-  var chunkSize = 100;
-  return Rx.Observable.fromPromise(query.find()).concatMap(function (posts) {
-    if (posts.length == chunkSize) {
-      var q = query.greaterThan('createdAt', posts[posts.length - 1].get('createdAt'));
-      return Rx.Observable.concat(Rx.Observable.from(posts), all(q));
-    } else {
-      return Rx.Observable.from(posts);
-    }
-  }).distinct(function (it) {
-    return it.id;
-  });
-}
-
-/**
- * @param {Parse.Object} parseObject
- */
-function fetch(parseObject) {
-  return Rx.Observable.fromPromise(parseObject.fetch()).map(function (it) {
-    return parseObject;
-  }).defaultIfEmpty(parseObject);
-}
-
-/**
- * @param {Parse.Object} parseObject
- */
-function save(parseObject) {
-  return Rx.Observable.fromPromise(parseObject.save()).map(function (it) {
-    return parseObject;
-  }).defaultIfEmpty(parseObject);
-}
 
 function hasFile(f) {
   var fs = require('fs');

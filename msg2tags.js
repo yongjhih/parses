@@ -3,8 +3,7 @@
 var Parse = require('parse/node').Parse;
 var Rx = require('rx');
 var program = require('commander');
-var Tag = Parse.Object.extend('Tag');
-var Post = Parse.Object.extend('Post');
+var Parses = require('./parses');
 
 program
   .version('1.0.0')
@@ -70,17 +69,18 @@ if (masterKey) Parse.Cloud.useMasterKey();
 //   }
 // }
 //
+var Tag = Parse.Object.extend('Tag');
+var Post = Parse.Object.extend('Post');
 var query = new Parse.Query("Post");
 query.equalTo("source", "Fb");
 query.notEqualTo("message", "");
-query.ascending('createdAt');
 query.include('tagList');
 
-var allObs = all(query);
+var allObs = Parses.all(query);
 if (user) {
-  allObs = get(new Parse.Query(Parse.User), user).flatMap(function (user) {
+  allObs = Parses.get(new Parse.Query(Parse.User), user).flatMap(function (user) {
     query.equalTo('user', user);
-    return all(query);
+    return Parses.all(query);
   });
 }
 
@@ -97,74 +97,23 @@ allObs.concatMap(function (post) {
         var t = new Tag(); // for default
         t.set('type', 'hashtag');
         t.set('hashtag', token);
-        return save(t);
+        return Parses.save(t);
       } else {
         return Rx.Observable.just(tag);
       }
     });
   }).concatMap(function (tag) {
-    return fetch(tag); // it's necessary after tag saving, TODO move up save(tag).concatMap(tag -> fetch(tag));
+    return Parses.fetch(tag); // it's necessary after tag saving, TODO move up save(tag).concatMap(tag -> fetch(tag));
   }).toArray().filter(function (it) {
     return it.length > 0;
   }).concatMap(function (tags) {
     for (var i = 0; i < tags.length; ++i) {
       post.addUnique('tagList', tags[i]); // addUnique(key, item)
     }
-    return save(post);
+    return Parses.save(post);
   }) : Rx.Observable.empty();
 }).doOnNext(function (post) {
 }).subscribe();
-
-/**
- * Require `query.ascending('createdAt')` and did not set limit(), please use Rx.Observable.take() instead.
- * @param {Parse.Query} query
- */
-function all(query) {
-  var chunkSize = 100;
-  return Rx.Observable.fromPromise(query.find()).concatMap(function (posts) {
-    if (posts.length == chunkSize) {
-      var q = query.greaterThan('createdAt', posts[posts.length - 1].get('createdAt'));
-      return Rx.Observable.concat(Rx.Observable.from(posts), all(q));
-    } else {
-      return Rx.Observable.from(posts);
-    }
-  }).distinct(function (it) {
-    return it.id;
-  });
-}
-
-/**
- * @param {Parse.Query} query
- */
-function find(query) {
-  return Rx.Observable.fromPromise(query.find());
-}
-
-/**
- * @param {Parse.Query} query
- * @param {String} id
- */
-function get(query, id) {
-  return Rx.Observable.fromPromise(query.get(id));
-}
-
-/**
- * @param {Parse.Object} parseObject
- */
-function fetch(parseObject) {
-  return Rx.Observable.fromPromise(parseObject.fetch()).map(function (it) {
-    return parseObject;
-  }).defaultIfEmpty(parseObject);
-}
-
-/**
- * @param {Parse.Object} parseObject
- */
-function save(parseObject) {
-  return Rx.Observable.fromPromise(parseObject.save()).map(function (it) {
-    return parseObject;
-  }).defaultIfEmpty(parseObject);
-}
 
 function hasFile(f) {
   var fs = require('fs');

@@ -5,8 +5,7 @@ var Rx = require('rx');
 var configPath = process.env.HOME + '/.parse/' + 'config.json'; // $ docker-parse list 8tory_dev
 var config = hasFile(configPath) ? require(configPath) : null;
 var program = require('commander');
-var Tag = Parse.Object.extend('Tag');
-var Post = Parse.Object.extend('Post');
+var Parses = require('./parses');
 
 program
   .version('1.0.0')
@@ -60,13 +59,14 @@ Parse.Cloud.useMasterKey();
 // }
 //
 
+var Tag = Parse.Object.extend('Tag');
+var Post = Parse.Object.extend('Post');
 var query = new Parse.Query("Post");
 query.equalTo("source", "Fb");
 query.notEqualTo("message", "");
-query.ascending('createdAt');
 query.include('tagList');
 
-all(query).concatMap(function (post) {
+Parses.all(query).concatMap(function (post) {
   var msg = post.get('message');
   if (!msg) return Rx.Observable.empty();
   var tokens = msg.match(/\#([^\u3000-\u303F。，\s]|[\w_-])+/g);
@@ -75,42 +75,6 @@ all(query).concatMap(function (post) {
     console.log(msg + ':= ' + token);
 }) : Rx.Observable.empty();
 }).subscribe();
-
-/**
- * Require `query.ascending('createdAt')` and did not set limit(), please use Rx.Observable.take() instead.
- * @param {Parse.Query} query
- */
-function all(query) {
-  var chunkSize = 100;
-  return Rx.Observable.fromPromise(query.find()).concatMap(function (posts) {
-    if (posts.length == chunkSize) {
-      var q = query.greaterThan('createdAt', posts[posts.length - 1].get('createdAt'));
-      return Rx.Observable.concat(Rx.Observable.from(posts), all(q));
-    } else {
-      return Rx.Observable.from(posts);
-    }
-  }).distinct(function (it) {
-    return it.id;
-  });
-}
-
-/**
- * @param {Parse.Object} parseObject
- */
-function fetch(parseObject) {
-  return Rx.Observable.fromPromise(parseObject.fetch()).map(function (it) {
-    return parseObject;
-  }).defaultIfEmpty(parseObject);
-}
-
-/**
- * @param {Parse.Object} parseObject
- */
-function save(parseObject) {
-  return Rx.Observable.fromPromise(parseObject.save()).map(function (it) {
-    return parseObject;
-  }).defaultIfEmpty(parseObject);
-}
 
 function hasFile(f) {
   var fs = require('fs');
