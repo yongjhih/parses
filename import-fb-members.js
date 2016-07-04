@@ -101,8 +101,11 @@ RxFacebook.Members(group, token).flatMap(function (member) {
     fbUser.addUnique("groups", group);
     fbUser.set("fbid", member.id);
     fbUser.set("name", member.name);
-    fbUser.set("administrator", member.administrator);
     return Rx.Observable.fromPromise(fbUser.save()); // target, new or update
+  }).flatMap(function (fbUser) {
+    fbUser.remove("groups", null);
+    fbUser.remove("groups", "null");
+    return Rx.Observable.fromPromise(fbUser.save());
   }).doOnNext(function (it) {
     console.log(it);
   });
