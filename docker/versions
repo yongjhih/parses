@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+for i in 0.0.{2..9}; do
+  if [ ! -d $i ]; then
+    mkdir $i
+
+    cp 0.0.1/* ${i}/
+    sed -i "s/0\\.0\\.1/${i}/" ${i}/Dockerfile
+  fi
+
+done
