@@ -1,7 +1,7 @@
 var chai = require('chai');
 var expect = chai.expect;
 var nock = require('nock');
-var RxFacebook = require('../index');
+var RxFacebook = require('../parses');
 
 describe('parses', function() {
   it('should be defined', function() {
