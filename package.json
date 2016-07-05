@@ -1,6 +1,6 @@
 {
   "name": "parses",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Parse Utils",
   "main": "parses.js",
   "repository": {
