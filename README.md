@@ -5,8 +5,7 @@
 [![coverage status][coveralls-image]][coveralls-url]
 [![Docker Pulls](https://img.shields.io/docker/pulls/yongjhih/parses.svg)](https://hub.docker.com/r/yongjhih/parses/)
 [![Docker Stars](https://img.shields.io/docker/stars/yongjhih/parses.svg)](https://hub.docker.com/r/yongjhih/parses/)
-[![Docker Size](https://img.shields.io/imagelayers/image-size/yongjhih/parses/latest.svg)](https://imagelayers.io/?images=yongjhih/parses:latest)
-[![Docker Layers](https://img.shields.io/imagelayers/layers/yongjhih/parses/latest.svg)](https://imagelayers.io/?images=yongjhih/parses:latest)
+[![](https://badge.imagelayers.io/yongjhih/parses.svg)](https://imagelayers.io/?images=yongjhih/parses:latest 'Get your own badge on imagelayers.io')
 [![Docker Tag](https://img.shields.io/github/tag/yongjhih/parses.js.svg)](https://hub.docker.com/r/yongjhih/parses.js/tags/)
 
 [npm-image]: https://img.shields.io/npm/v/parses.svg?style=flat-square
