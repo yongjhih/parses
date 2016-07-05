@@ -1,12 +1,12 @@
 {
   "name": "parses",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Parse Utils",
   "main": "parses.js",
   "files": [
       "remove.js",
       "remove-dup.js",
-      "msg2tag.js",
+      "msg2tags.js",
       "emails.js",
       "parses.js",
       "README.md",
