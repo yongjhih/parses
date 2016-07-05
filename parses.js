@@ -106,5 +106,4 @@ function removeDupByColumn(parseQuery, column) {
 }
 Parses.removeDupByColumn = removeDupByColumn;
 
-}));
 /* vim: set sw=2: */
