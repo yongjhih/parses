@@ -11,6 +11,8 @@
 [coveralls-image]: https://img.shields.io/coveralls/yongjhih/parses.js.svg?style=flat-square
 [coveralls-url]: https://coveralls.io/r/yongjhih/parses.js
 
+![](art/parses.png)
+
 ## Usage
 
 * Get all emails with paging for example:
