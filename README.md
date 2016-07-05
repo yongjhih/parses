@@ -6,7 +6,6 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/yongjhih/parses.svg)](https://hub.docker.com/r/yongjhih/parses/)
 [![Docker Stars](https://img.shields.io/docker/stars/yongjhih/parses.svg)](https://hub.docker.com/r/yongjhih/parses/)
 [![](https://badge.imagelayers.io/yongjhih/parses.svg)](https://imagelayers.io/?images=yongjhih/parses:latest 'Get your own badge on imagelayers.io')
-[![Docker Tag](https://img.shields.io/github/tag/yongjhih/parses.js.svg)](https://hub.docker.com/r/yongjhih/parses.js/tags/)
 
 [npm-image]: https://img.shields.io/npm/v/parses.svg?style=flat-square
 [npm-url]: https://www.npmjs.com/package/parses
