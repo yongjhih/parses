@@ -28,7 +28,9 @@
     root.readline = factory(root, {});
   }
 }.call(this, function (root, exp, undefined) {
-  root.readline = exp.readline = function (file) {
+  root.readline = exp.readline = readline;
+
+  function readline (file) {
     var Rx = require('rx');
     return Rx.Observable.create(function (sub) {
       require('readline').createInterface({
