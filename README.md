@@ -20,11 +20,48 @@
 
 * Get all emails with paging for example:
 
+Before:
+
+```js
+var query = new Parse.Query("User");
+
+all(query, 128).then(function(list) {
+  console.log(list);
+});
+
+function all(query, limit) {
+  var promise = new Parse.Promise();
+
+  console.log(limit);
+  query.descending('createdAt');
+  var list = [];
+  var _all = function (_query) {
+    _query.find().then(function (_list) {
+      list = list.concat(_list);
+      if (_list.length < 100 || list.length >= limit) {
+        promise.resolve(list);
+        return;
+      }
+      _query.lessThanOrEqualTo('createdAt', _list[_list.length - 1].createdAt);
+      _all(_query);
+    }, function (e) {
+      promise.reject(e);
+    });
+  };
+
+  _all(query);
+
+  return promise;
+}
+```
+
+After:
+
 ```js
 var Parses = require('parses');
 var query = new Parse.Query("User");
 
-Parses.all(query).subscribe(function(user) {
+Parses.all(query).take(128).subscribe(function(user) {
   console.log(user.get('email'));
 });
 ```
