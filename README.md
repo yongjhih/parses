@@ -13,6 +13,17 @@
 
 ## Usage
 
+Get all emails with paging, email.js:
+
+```js
+var Parses = require('parses');
+var query = new Parse.Query("User");
+
+Parses.all(query).subscribe(function(user) {
+  console.log(user.get('email'));
+});
+```
+
 emails:
 
 ```sh
