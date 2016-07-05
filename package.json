@@ -1,6 +1,6 @@
 {
   "name": "parses",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Parse Utils",
   "main": "parses.js",
   "files": [
@@ -53,7 +53,7 @@
     "parse-remove": "./remove.js",
     "parse-remove-dup": "./remove-dup.js",
     "parse-msg2tags": "./msg2tags.js",
-    "parse-emails": "./email.js"
+    "parse-emails": "./emails.js"
   },
   "engines": {
     "node": ">=4.3"
