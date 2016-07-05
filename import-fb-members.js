@@ -31,7 +31,7 @@ var jsKey = program.jsKey ? program.jsKey : process.env.JS_KEY;
 var masterKey = program.masterKey ? program.masterKey : process.env.MASTER_KEY;
 var user = program.user ? program.user : process.env.PARSE_USER;
 var url = program.url;
-var groups = (program.groups) ? groups.split(",") : null;
+var groups = (program.groups) ? program.groups.split(",") : null;
 var token = program.token;
 
 var configPath = program.config;
@@ -99,7 +99,7 @@ Parse.Cloud.useMasterKey();
 //var Fetch = require('isomorphic-fetch');
 var RxFacebook = require('rx-facebook');
 
-Rx.Observable.from()
+Rx.Observable.from(groups)
   .concatMap(function (group) {
     return RxFacebook.Members(group, token)
       .concatMap(function (member) {
