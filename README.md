@@ -30,7 +30,7 @@ Parses.all(query).subscribe(function(user) {
 
 ```sh
 $ npm install parses
-$ ./node_modules/.bin/parse-emails.js --appId fff --jsKey fff --masterKey fff
+$ ./node_modules/.bin/parse-emails --appId fff --jsKey fff --masterKey fff
 ```
 
 ## Persistent Configuration
@@ -54,7 +54,7 @@ $ ./node_modules/.bin/parse-emails.js --appId fff --jsKey fff --masterKey fff
 
 ```sh
 $ npm install parses
-$ ./node_modules/.bin/parse-emails.js --production # default 'dev'
+$ ./node_modules/.bin/parse-emails --production # default 'dev'
 ```
 
 ## Installation
