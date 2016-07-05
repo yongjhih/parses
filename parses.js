@@ -137,6 +137,44 @@
   }
   Parses.removeDupByColumn = removeDupByColumn;
 
+  require('es6-promise').polyfill();
+
+  function logInWithFacebook(permissions) {
+    return Rx.Observable.fromPromise(logInWithFacebookPromise(permissions));
+  }
+  Parses.logInWithFacebook = logInWithFacebook;
+
+  function logInWithFacebookPromise(permissions) {
+    return new Promise(function (resolve, reject) {
+      Parse.FacebookUtils.logIn(permissions, {
+        success: function(user) {
+          resolve(user);
+        },
+        error: function(user, error) {
+          reject(error);
+        }
+      });
+    });
+  }
+
+  function linkFacebook(permissions, user) {
+    return Rx.Observable.fromPromise(linkFacebookPromise(permissions, user));
+  }
+  Parses.linkFacebook = linkFacebook;
+
+  function linkFacebookPromise(permissions, user) {
+    return new Promise(function (resolve, reject) {
+      Parse.FacebookUtils.link(user ? user : Parse.User.current(), permissions, {
+        success: function(_user) {
+          resolve(_user);
+        },
+        error: function(_user, error) {
+          reject(error);
+        }
+      });
+    });
+  }
+
   return Parses;
 }));
 

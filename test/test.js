@@ -16,6 +16,14 @@ describe('parses', function() {
     expect(Parses.find).to.be.a('function');
   });
 
+  it('should be .logInWithFacebook defined', function() {
+    expect(Parses.logInWithFacebook).to.be.a('function');
+  });
+
+  it('should be .linkFacebook defined', function() {
+    expect(Parses.linkFacebook).to.be.a('function');
+  });
+
 });
 
 /* vim: set sw=2: */

@@ -16,7 +16,9 @@
 
 ![](art/parses.png)
 
-Easy to use parse. A parses library and some cli utilities.
+rx-parse
+
+Easy to use parse with RxJS. A Parse utilities library and cli.
 
 * Get all emails with paging for example:
 
