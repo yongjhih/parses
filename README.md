@@ -1,3 +1,16 @@
+# rx-facebook.js
+
+[![npm version][npm-image]][npm-url]
+[![build status][travis-image]][travis-url]
+[![coverage status][coveralls-image]][coveralls-url]
+
+[npm-image]: https://img.shields.io/npm/v/parses.svg?style=flat-square
+[npm-url]: https://www.npmjs.com/package/parses
+[travis-image]: https://img.shields.io/travis/yongjhih/parses.js.svg?style=flat-square
+[travis-url]: https://travis-ci.org/yongjhih/parses.js
+[coveralls-image]: https://img.shields.io/coveralls/yongjhih/parses.js.svg?style=flat-square
+[coveralls-url]: https://coveralls.io/r/yongjhih/parses.js
+
 ## Usage
 
 emails:
