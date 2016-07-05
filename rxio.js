@@ -30,7 +30,7 @@
 }.call(this, function (root, exp, undefined) {
   root.readline = exp.readline = readline;
 
-  function readline (file) {
+  function readline(file) {
     var Rx = require('rx');
     return Rx.Observable.create(function (sub) {
       require('readline').createInterface({
