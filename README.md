@@ -29,7 +29,7 @@ all(query, 128).then(function(list) {
   console.log(list);
 });
 
-function all(query, limit) {
+function all(query, limit) { // It's sync/blocking until collected due to limit
   var promise = new Parse.Promise();
 
   console.log(limit);
@@ -61,7 +61,7 @@ After:
 var Parses = require('parses');
 var query = new Parse.Query("User");
 
-Parses.all(query).take(128).subscribe(function(user) {
+Parses.all(query).take(128).subscribe(function(user) { // async
   console.log(user.get('email'));
 });
 ```
