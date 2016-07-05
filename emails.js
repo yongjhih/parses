@@ -5,7 +5,7 @@ var Rx = require('rx');
 var configPath = process.env.HOME + '/.parse/' + 'config.json'; // $ docker-parse list 8tory_dev
 var config = hasFile(configPath) ? require(configPath) : null;
 var program = require('commander');
-var Parses = require('./parses');
+require('./parses');
 
 program
   .version('1.0.0')
