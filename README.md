@@ -3,6 +3,11 @@
 [![npm version][npm-image]][npm-url]
 [![build status][travis-image]][travis-url]
 [![coverage status][coveralls-image]][coveralls-url]
+[![Docker Pulls](https://img.shields.io/docker/pulls/yongjhih/parses.svg)](https://hub.docker.com/r/yongjhih/parses/)
+[![Docker Stars](https://img.shields.io/docker/stars/yongjhih/parses.svg)](https://hub.docker.com/r/yongjhih/parses/)
+[![Docker Size](https://img.shields.io/imagelayers/image-size/yongjhih/parses/latest.svg)](https://imagelayers.io/?images=yongjhih/parses:latest)
+[![Docker Layers](https://img.shields.io/imagelayers/layers/yongjhih/parses/latest.svg)](https://imagelayers.io/?images=yongjhih/parses:latest)
+[![Docker Tag](https://img.shields.io/github/tag/yongjhih/parses.js.svg)](https://hub.docker.com/r/yongjhih/parses.js/tags/)
 
 [npm-image]: https://img.shields.io/npm/v/parses.svg?style=flat-square
 [npm-url]: https://www.npmjs.com/package/parses
@@ -31,6 +36,12 @@ Parses.all(query).subscribe(function(user) {
 ```sh
 $ npm install parses
 $ ./node_modules/.bin/parse-emails --appId fff --jsKey fff --masterKey fff
+```
+
+* A parse-emails docker command line:
+
+```sh
+docker run -it yongjhih/parses parse-emails --appId fff --jsKey fff --masterKey fff
 ```
 
 ## Persistent Configuration
