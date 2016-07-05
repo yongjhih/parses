@@ -33,6 +33,13 @@
     "rx-facebook": "",
     "commander": "~2.9.0"
   },
+  "scripts": {
+    "start": "node parses.js",
+    "email": "node email.js",
+    "test": "mocha test/test.js",
+    "report": "istanbul cover _mocha -- -R spec test/test.js",
+    "coveralls": "istanbul cover _mocha --report lcovonly -- -R spec test/test.js && cat ./coverage/lcov.info | coveralls"
+  },
   "engines": {
     "node": ">=4.3"
   }
