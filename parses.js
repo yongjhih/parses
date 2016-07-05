@@ -45,7 +45,7 @@ require('./rx.distincts');
 function all(query) {
   return allDesc(query);
 }
-Parses.all = all;
+Parses.prototype.all = all;
 
 function allAsc(query) {
   var chunkSize = 100;
@@ -61,7 +61,7 @@ function allAsc(query) {
     return it.id;
   });
 }
-Parses.allAsc = allAsc;
+Parses.prototype.allAsc = allAsc;
 
 function allDesc(query) {
   var chunkSize = 100;
@@ -77,7 +77,7 @@ function allDesc(query) {
     return it.id;
   });
 }
-Parses.allDesc = allDesc;
+Parses.prototype.allDesc = allDesc;
 
 /**
  * @param {Parse.Query} query
@@ -85,7 +85,7 @@ Parses.allDesc = allDesc;
 function find(query) {
   return Rx.Observable.fromPromise(query.find());
 }
-Parses.find = find;
+Parses.prototype.find = find;
 
 /**
  * @param {Parse.Query} query
@@ -94,7 +94,7 @@ Parses.find = find;
 function get(query, id) {
   return Rx.Observable.fromPromise(query.get(id));
 }
-Parses.get = get;
+Parses.prototype.get = get;
 
 /**
  * @param {Parse.Object} parseObject
@@ -104,7 +104,7 @@ function fetch(parseObject) {
     return parseObject;
   }).defaultIfEmpty(parseObject);
 }
-Parses.fetch = fetch;
+Parses.prototype.fetch = fetch;
 
 /**
  * @param {Parse.Object} parseObject
@@ -114,28 +114,28 @@ function save(parseObject) {
     return parseObject;
   }).defaultIfEmpty(parseObject);
 }
-Parses.save = save;
+Parses.prototype.save = save;
 
 function removeAll(parseQuery) {
   return all(parseQuery).concatMap(function (parseObject) {
     return parseObject.destroy({});
   });
 }
-Parses.removeAll = removeAll;
+Parses.prototype.removeAll = removeAll;
 
 function removeDup(parseQuery, keySelector) {
   return all(parseQuery).distincts(keySelector, null, function (it) {
     it.destroy({});
   });
 }
-Parses.removeDup = removeDup;
+Parses.prototype.removeDup = removeDup;
 
 function removeDupByColumn(parseQuery, column) {
   return removeDup(parseQuery, function (it) {
     return it.get(column);
   });
 }
-Parses.removeDupByColumn = removeDupByColumn;
+Parses.prototype.removeDupByColumn = removeDupByColumn;
 
 }));
 /* vim: set sw=2: */
