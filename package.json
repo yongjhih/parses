@@ -1,8 +1,17 @@
 {
   "name": "parses",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Parse Utils",
   "main": "parses.js",
+  "files": [
+      "remove.js",
+      "remove-dup.js",
+      "msg2tag.js",
+      "emails.js",
+      "parses.js",
+      "README.md",
+      "LICENSE"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/yongjhih/parses.js"
@@ -16,6 +25,13 @@
   },
   "homepage": "https://github.com/yongjhih/parses.js",
   "license": "Apache-2.0",
+  "dependencies": {
+    "isomorphic-fetch": "^2.2.1",
+    "parse": "~1.8.0",
+    "rx": "~4.1.0",
+    "rx-facebook": "0.0.1",
+    "commander": "~2.9.0"
+  },
   "devDependencies": {
     "js-beautify": "~1.5.0",
     "chai": "1.10.0",
@@ -25,20 +41,19 @@
     "lintspaces-cli": "^0.1.1",
     "npm-prepublish": "^1.0.2",
     "istanbul": "",
-    "coveralls": "^2.11.2",
-    "isomorphic-fetch": "",
-    "es6-promise": "",
-    "parse": "~1.8.0",
-    "rx": "~4.1.0",
-    "rx-facebook": "",
-    "commander": "~2.9.0"
+    "coveralls": "^2.11.2"
   },
   "scripts": {
     "start": "node parses.js",
-    "email": "node email.js",
     "test": "mocha test/test.js",
     "report": "istanbul cover _mocha -- -R spec test/test.js",
     "coveralls": "istanbul cover _mocha --report lcovonly -- -R spec test/test.js && cat ./coverage/lcov.info | coveralls"
+  },
+  "bin": {
+    "parse-remove": "./remove.js",
+    "parse-remove-dup": "./remove-dup.js",
+    "parse-msg2tags": "./msg2tags.js",
+    "parse-emails": "./email.js"
   },
   "engines": {
     "node": ">=4.3"

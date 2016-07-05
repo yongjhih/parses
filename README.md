@@ -13,7 +13,7 @@
 
 ## Usage
 
-Get all emails with paging, email.js:
+Get all emails with paging, emails.js:
 
 ```js
 var Parses = require('parses');
