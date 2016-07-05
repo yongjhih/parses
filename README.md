@@ -13,7 +13,7 @@
 
 ## Usage
 
-Get all emails with paging, emails.js:
+* Get all emails with paging for example:
 
 ```js
 var Parses = require('parses');
@@ -24,11 +24,11 @@ Parses.all(query).subscribe(function(user) {
 });
 ```
 
-emails:
+* A parse-emails command line:
 
 ```sh
-$ npm install
-$ ./emails.js --appId fff --jsKey fff --masterKey fff
+$ npm install parses
+$ ./node_modules/.bin/parse-emails.js --appId fff --jsKey fff --masterKey fff
 ```
 
 ## Persistent Configuration
@@ -51,8 +51,14 @@ $ ./emails.js --appId fff --jsKey fff --masterKey fff
 ```
 
 ```sh
-$ npm install
-$ ./emails.js --production # default 'dev'
+$ npm install parses
+$ ./node_modules/.bin/parse-emails.js --production # default 'dev'
+```
+
+## Installation
+
+```sh
+$ npm install parses
 ```
 
 ## LICENSE
