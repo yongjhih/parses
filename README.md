@@ -16,7 +16,7 @@
 
 ![](art/parses.png)
 
-## Usage
+Easy to use parse. A parses library and some cli utilities.
 
 * Get all emails with paging for example:
 
@@ -65,6 +65,8 @@ Parses.all(query).take(128).subscribe(function(user) { // async
   console.log(user.get('email'));
 });
 ```
+
+## Usage
 
 * A parse-emails command line:
 
