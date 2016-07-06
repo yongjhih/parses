@@ -34,7 +34,6 @@ all(query, 128).then(function(list) {
 function all(query, limit) { // It's sync/blocking until collected due to limit
   var promise = new Parse.Promise();
 
-  console.log(limit);
   query.descending('createdAt');
   var list = [];
   var _all = function (_query) {
