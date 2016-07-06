@@ -10,6 +10,7 @@
       "msg2tags.js",
       "emails.js",
       "parses.js",
+      "rx-parse.js",
       "README.md",
       "LICENSE"
   ],
