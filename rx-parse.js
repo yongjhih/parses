@@ -186,8 +186,6 @@
 
   function importJson(jsons) {
     return Rx.Observable.from(files)
-      //.map(function (value) { return Rx.Observable.return(value).delay(100); })
-      //.concatAll()
       .map(function (file) {
         var path = require('path');
         var className = path.basename(file, '.json')
@@ -195,22 +193,22 @@
         json.className = className;
         return json;
       })
-    .flatMap(function (json) {
-      return Rx.Observable.from(json.results)
-        .doOnNext(function (from) {
-          delete from.this;
-          delete from.ACL;
-          delete from.objectId;
-          delete from.createdAt;
-          delete from.updatedAt;
-        })
-      .doOnNext(function (from) {
-        from.className = json.className;
+      .flatMap(function (json) {
+        return Rx.Observable.from(json.results)
+          .doOnNext(function (from) {
+            delete from.this;
+            delete from.ACL;
+            delete from.objectId;
+            delete from.createdAt;
+            delete from.updatedAt;
+          })
+          .doOnNext(function (from) {
+            from.className = json.className;
+          });
+      })
+      .flatMap(function (from) {
+        return Parses.save(Parse.Object.fromJSON(from));
       });
-    })
-    .flatMap(function (from) {
-      return Parses.save(Parse.Object.fromJSON(from));
-    });
   }
   RxParse.importJson = importJson;
 
