@@ -216,7 +216,6 @@
       })
       .doOnNext(function (json) {
         delete json.this;
-        delete json.ACL;
         delete json.objectId;
         delete json.createdAt;
         delete json.updatedAt;
