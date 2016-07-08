@@ -175,6 +175,45 @@
     });
   }
 
+  function importJsonRetry(jsons) {
+    return importJson(jsons).retryWhen(function (attempts) {
+      return Rx.Observable.range(1, 3).zip(attempts, function (i) { return i; }).flatMap(function (i) {
+        return Rx.Observable.timer(i * 1000);
+      });
+    });
+  }
+  RxParse.importJsonRetry = importJsonRetry;
+
+  function importJson(jsons) {
+    return Rx.Observable.from(files)
+      //.map(function (value) { return Rx.Observable.return(value).delay(100); })
+      //.concatAll()
+      .map(function (file) {
+        var path = require('path');
+        var className = path.basename(file, '.json')
+          var json = require(file);
+        json.className = className;
+        return json;
+      })
+    .flatMap(function (json) {
+      return Rx.Observable.from(json.results)
+        .doOnNext(function (from) {
+          delete from.this;
+          delete from.ACL;
+          delete from.objectId;
+          delete from.createdAt;
+          delete from.updatedAt;
+        })
+      .doOnNext(function (from) {
+        from.className = json.className;
+      });
+    })
+    .flatMap(function (from) {
+      return Parses.save(Parse.Object.fromJSON(from));
+    });
+  }
+  RxParse.importJson = importJson;
+
   return RxParse;
 }));
 
