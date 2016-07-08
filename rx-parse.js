@@ -175,42 +175,57 @@
     });
   }
 
-  function importJsonRetry(jsons) {
-    return importJson(jsons).retryWhen(function (attempts) {
+  function importFromFileRetry(file) {
+    return importFromFilesRetry([file]);
+  }
+  RxParse.importFromFileRetry = importFromFileRetry;
+
+  function importFromFilesRetry(files) {
+    return importFromFiles(files).retryWhen(function (attempts) {
       return Rx.Observable.range(1, 3).zip(attempts, function (i) { return i; }).flatMap(function (i) {
         return Rx.Observable.timer(i * 1000);
       });
     });
   }
-  RxParse.importJsonRetry = importJsonRetry;
+  RxParse.importFromFilesRetry = importFromFilesRetry;
 
-  function importJson(jsons) {
+  function importFromFile(file) {
+    return importFromFiles([file]);
+  }
+  RxParse.importFromFile = importFromFile;
+
+  function importFromFiles(files) {
     return Rx.Observable.from(files)
       .map(function (file) {
         var path = require('path');
-        var className = path.basename(file, '.json')
-          var json = require(file);
-        json.className = className;
+        var json = require(file);
+        json.className = path.basename(file, '.json');
         return json;
       })
       .flatMap(function (json) {
         return Rx.Observable.from(json.results)
-          .doOnNext(function (from) {
-            delete from.this;
-            delete from.ACL;
-            delete from.objectId;
-            delete from.createdAt;
-            delete from.updatedAt;
-          })
-          .doOnNext(function (from) {
-            from.className = json.className;
-          });
-      })
-      .flatMap(function (from) {
-        return Parses.save(Parse.Object.fromJSON(from));
+          .flatMap(function (from) { return saveFromJson(from, json.className); });
       });
   }
-  RxParse.importJson = importJson;
+  RxParse.importFromFiles = importFromFiles;
+
+  function saveFromJson(json, className) {
+    return Rx.Observable.just(json)
+      .doOnNext(function (json) {
+        json.className = className;
+      })
+      .doOnNext(function (json) {
+        delete json.this;
+        delete json.ACL;
+        delete json.objectId;
+        delete json.createdAt;
+        delete json.updatedAt;
+      })
+      .flatMap(function (json) {
+        return Parses.save(Parse.Object.fromJSON(json));
+      });
+  }
+  RxParse.saveFromJson = saveFromJson;
 
   return RxParse;
 }));

@@ -86,7 +86,7 @@ if (url) Parse.serverURL = url;
 Parse.initialize(appId, jsKey, masterKey);
 if (masterKey) Parse.Cloud.useMasterKey();
 
-Parses.importJson(files)
+Parses.importFromFiles(files)
   .retryWhen(function (attempts) {
     return Rx.Observable.range(1, 3).zip(attempts, function (i) { return i; }).flatMap(function (i) {
       console.log("delay retry by " + i + " second(s)");
