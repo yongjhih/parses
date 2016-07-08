@@ -112,6 +112,11 @@ $ ./node_modules/.bin/parse-emails --production # default 'dev'
 $ npm install parses
 ```
 
+## Reference
+
+* https://github.com/ParsePlatform/parse-dashboard/issues/336
+* https://github.com/ParsePlatform/parse-server/issues/78
+
 ## LICENSE
 
 ```
