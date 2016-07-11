@@ -3,8 +3,8 @@
 [![npm version][npm-image]][npm-url]
 [![build status][travis-image]][travis-url]
 [![coverage status][coveralls-image]][coveralls-url]
-[![Docker Pulls](https://img.shields.io/docker/pulls/yongjhih/parses.svg)](https://hub.docker.com/r/yongjhih/parses/)
-[![Docker Stars](https://img.shields.io/docker/stars/yongjhih/parses.svg)](https://hub.docker.com/r/yongjhih/parses/)
+[![Docker Pulls](https://img.shields.io/docker/pulls/yongjhih/parses.svg?style=flat-square)](https://hub.docker.com/r/yongjhih/parses/)
+[![Docker Stars](https://img.shields.io/docker/stars/yongjhih/parses.svg?style=flat-square)](https://hub.docker.com/r/yongjhih/parses/)
 [![](https://badge.imagelayers.io/yongjhih/parses.svg)](https://imagelayers.io/?images=yongjhih/parses:latest 'Get your own badge on imagelayers.io')
 
 [npm-image]: https://img.shields.io/npm/v/parses.svg?style=flat-square
