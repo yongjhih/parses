@@ -13,11 +13,13 @@ program
   .option('-a, --appId <appId>', 'appId')
   .option('-j, --jsKey <jsKey>', 'jsKey')
   .option('-m, --masterKey <masterKey>', 'masterKey')
+  .option('--url <url>', 'api url')
   .parse(process.argv);
 
 var appId = program.appId ? program.appId : process.env.APP_ID;
 var jsKey = program.jsKey ? program.jsKey : process.env.JS_KEY;
 var masterKey = program.masterKey ? program.masterKey : process.env.MASTER_KEY;
+var url = program.url;
 
 if (config) {
   if (program.production) {
@@ -38,7 +40,9 @@ if (!appId) console.error('missing appId');
 if (!jsKey) console.error('missing jsKey');
 if (!masterKey) console.error('missing masterKey');
 
+if (url) Parse.serverURL = url;
 Parse.initialize(appId, jsKey, masterKey);
+if (masterKey) Parse.Cloud.useMasterKey();
 
 var query = new Parse.Query("User");
 
