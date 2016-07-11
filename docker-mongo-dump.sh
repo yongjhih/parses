@@ -22,12 +22,8 @@ shift $((OPTIND-1))
 collection="$1"
 [ "$collection" ] || exit 1
 
-host=$(port:-172.17.0.1:27017)
+host=$(port:-"172.17.0.1:27017")
 db=$(db:-dev)
 
-docker run -it -v `pwd`:`pwd` -w `pwd` mongo mongo \
-           --eval "db.getCollection(\"${collection}\").drop()" \
-           --host "$host" \
-           -u "$user"
-           -p "$password"
-           "$db"
+echo docker run -it -v `pwd`:`pwd` -w `pwd` mongo mongodump \
+           -h "$host" -d "$db" -u "$user" -p "$password" -o "$db".mongo.db
