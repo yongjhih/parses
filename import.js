@@ -33,7 +33,6 @@ var url = program.url;
 
 var configPath = program.config;
 var config = hasFile(configPath) ? require(configPath) : null;
-var configJson;
 
 if (config) {
   if (program.production) {
@@ -50,7 +49,6 @@ if (config) {
 }
 
 if (program.dryrun) {
-  console.log(configJson);
   process.exit();
 }
 

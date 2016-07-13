@@ -147,10 +147,10 @@
   function logInWithFacebookPromise(permissions) {
     return new Promise(function (resolve, reject) {
       Parse.FacebookUtils.logIn(permissions, {
-        success: function(user) {
+        success: function (user) {
           resolve(user);
         },
-        error: function(user, error) {
+        error: function (user, error) {
           reject(error);
         }
       });
@@ -225,6 +225,25 @@
       });
   }
   RxParse.saveFromJson = saveFromJson;
+
+  function pushPromise(data) {
+    return new Promise(function (resolve, reject) {
+      Parse.Push.send(data, {
+        success: function () {
+          resolve();
+        },
+        error: function (error){
+          reject(error);
+        },
+        useMasterKey: true
+      });
+    });
+  }
+
+  function push(data) {
+    return Rx.Observable.fromPromise(pushPromise(data));
+  }
+  RxParse.push = push;
 
   return RxParse;
 }));
