@@ -66,8 +66,8 @@ var query = new Parse.Query(Parse.Installation);
 Parses.push({
   where: query ,
   data: {
-    "title": "testing!",
-    "alert": "New Server Test "
+    "title": "teting!",
+    "alert": "Ne Server Test "
   }
 }).subscribe(function (it) {
   console.log("ok");

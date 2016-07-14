@@ -36,6 +36,7 @@
     "commander": "~2.9.0"
   },
   "devDependencies": {
+    "node-gcm": "~0.14.3",
     "js-beautify": "~1.5.0",
     "chai": "1.10.0",
     "jshint": "2.8.0",
