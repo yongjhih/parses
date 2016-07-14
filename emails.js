@@ -18,7 +18,6 @@ program
   //.option('--location', 'sync only location posts')
   .option('--url <url>', 'Specifiy parse api url')
   .option('-f, --config <config>', 'Specifiy config path')
-  .option('--dryrun', 'Dryrun')
   .parse(process.argv);
 
 var appId = program.appId ? program.appId : process.env.APP_ID;
@@ -44,10 +43,6 @@ if (config) {
   }
 }
 
-if (program.dryrun) {
-  process.exit();
-}
-
 // TODO fatal error and exit
 if (!appId) {
   console.error('missing appId');
@@ -66,6 +61,14 @@ console.log(appId);
 console.log(jsKey);
 console.log(masterKey);
 console.log(url);
+
+var Parse = require('parse/node').Parse;
+var Rx = require('rx');
+var Parses = require('./parses');
+
+if (url) Parse.serverURL = url;
+Parse.initialize(appId, jsKey, masterKey);
+if (masterKey) Parse.Cloud.useMasterKey();
 
 var query = new Parse.Query("User");
 
