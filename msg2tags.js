@@ -113,7 +113,7 @@ allObs.concatMap(function (post) {
     return Parses.save(post);
   }) : Rx.Observable.empty();
 }).doOnNext(function (post) {
-}).subscribe();
+}).subscribe(function (it) {}, function (e) { console.log(e); });
 
 function hasFile(f) {
   var fs = require('fs');
