@@ -94,8 +94,8 @@ Parses.all(query).flatMap(function(it) {
   var roleQuery = new Parse.Query(Parse.Role);
   roleQuery.equalTo('name', roleName);
   return Parses.first(roleQuery).retryWhen(function (attempts) {
-          return Rx.Observable.range(1, 3000).zip(attempts, function (i) { return i; }).flatMap(function (i) {
-            return Rx.Observable.timer(i * 1000);
+          return Rx.Observable.range(1, 60).zip(attempts, function (i) { return i; }).flatMap(function (i) {
+            return Rx.Observable.timer(i * 60000);
           });
         }).filter(function (role) { return role; }).flatMap(function (role) {
     console.log('"' + role + '"');
@@ -103,8 +103,8 @@ Parses.all(query).flatMap(function(it) {
     acl.setRoleWriteAccess(role, true);
     it.setACL(acl);
     return Parses.save(it).retryWhen(function (attempts) {
-      return Rx.Observable.range(1, 3000).zip(attempts, function (i) { return i; }).flatMap(function (i) {
-        return Rx.Observable.timer(i * 1000);
+      return Rx.Observable.range(1, 60).zip(attempts, function (i) { return i; }).flatMap(function (i) {
+        return Rx.Observable.timer(i * 60000);
       });
     });
   });
