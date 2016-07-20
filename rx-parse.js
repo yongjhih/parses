@@ -53,7 +53,11 @@
     return Rx.Observable.fromPromise(query.find()).concatMap(function (posts) {
       if (posts.length == chunkSize) {
         var q = query.greaterThanOrEqualTo('createdAt', posts[posts.length - 1].get('createdAt'));
-        return Rx.Observable.concat(Rx.Observable.from(posts), all(q));
+        return Rx.Observable.concat(Rx.Observable.from(posts), allAsc(q).retryWhen(function (attempts) {
+          return Rx.Observable.range(1, 3000).zip(attempts, function (i) { return i; }).flatMap(function (i) {
+            return Rx.Observable.timer(i * 1000);
+          });
+        }));
       } else {
         return Rx.Observable.from(posts);
       }
@@ -69,7 +73,11 @@
     return Rx.Observable.fromPromise(query.find()).concatMap(function (posts) {
       if (posts.length == chunkSize) {
         var q = query.lessThanOrEqualTo('createdAt', posts[posts.length - 1].get('createdAt'));
-        return Rx.Observable.concat(Rx.Observable.from(posts), all(q));
+        return Rx.Observable.concat(Rx.Observable.from(posts), allDesc(q).retryWhen(function (attempts) {
+          return Rx.Observable.range(1, 3000).zip(attempts, function (i) { return i; }).flatMap(function (i) {
+            return Rx.Observable.timer(i * 1000);
+          });
+        }));
       } else {
         return Rx.Observable.from(posts);
       }
