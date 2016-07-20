@@ -89,6 +89,14 @@
 
   /**
    * @param {Parse.Query} query
+   */
+  function first(query) {
+    return Rx.Observable.fromPromise(query.first());
+  }
+  RxParse.first = first;
+
+  /**
+   * @param {Parse.Query} query
    * @param {String} id
    */
   function get(query, id) {
