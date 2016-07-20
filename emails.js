@@ -26,7 +26,7 @@ var masterKey = program.masterKey ? program.masterKey : process.env.MASTER_KEY;
 var user = program.user ? program.user : process.env.PARSE_USER;
 var url = program.url;
 
-var configPath = program.config;
+var configPath = program.config ? program.config : process.env.HOME + '/.parse/' + 'config.json'; // $ docker-parse list 8tory_dev
 var config = hasFile(configPath) ? require(configPath) : null;
 
 if (config) {

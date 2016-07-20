@@ -47,45 +47,62 @@
   }
   RxParse.all = all;
 
+  function allArray(query) {
+    return allArrayDesc(query);
+  }
+  RxParse.allArray = allArray;
+
   function allAsc(query) {
-    var chunkSize = 100;
-    query.ascending('createdAt');
-    return Rx.Observable.fromPromise(query.find()).concatMap(function (posts) {
-      if (posts.length == chunkSize) {
-        var q = query.greaterThanOrEqualTo('createdAt', posts[posts.length - 1].get('createdAt'));
-        return Rx.Observable.concat(Rx.Observable.from(posts), allAsc(q).retryWhen(function (attempts) {
-          return Rx.Observable.range(1, 60).zip(attempts, function (i) { return i; }).flatMap(function (i) {
-            return Rx.Observable.timer(i * 60000);
-          });
-        }));
-      } else {
-        return Rx.Observable.from(posts);
-      }
-    }).distinct(function (it) {
-      return it.id;
-    });
+    return allArrayAsc(query)
+      .retryWhen(function (attempts) {
+        return Rx.Observable.range(1, 60).zip(attempts, function (i) { return i; }).flatMap(function (i) {
+          return Rx.Observable.timer(i * 60000);
+        });
+      })
+      .flatMap(function (posts) { return Rx.Observable.from(posts); })
+      .distinct(function (it) { return it.id; });
   }
   RxParse.allAsc = allAsc;
 
-  function allDesc(query) {
+  function allArrayAsc(query) {
     var chunkSize = 100;
-    query.descending('createdAt');
-    return Rx.Observable.fromPromise(query.find()).concatMap(function (posts) {
+    query.ascending('createdAt');
+    return find(query).concatMap(function (posts) {
       if (posts.length == chunkSize) {
-        var q = query.lessThanOrEqualTo('createdAt', posts[posts.length - 1].get('createdAt'));
-        return Rx.Observable.concat(Rx.Observable.from(posts), allDesc(q).retryWhen(function (attempts) {
-          return Rx.Observable.range(1, 60).zip(attempts, function (i) { return i; }).flatMap(function (i) {
-            return Rx.Observable.timer(i * 60000);
-          });
-        }));
+        var q = query.greaterThanOrEqualTo('createdAt', posts[posts.length - 1].get('createdAt'));
+        return Rx.Observable.concat(Rx.Observable.just(posts), allArrayAsc(q));
       } else {
-        return Rx.Observable.from(posts);
+        return Rx.Observable.just(posts);
       }
-    }).distinct(function (it) {
-      return it.id;
     });
   }
+  RxParse.allArrayAsc = allArrayAsc;
+
+  function allDesc(query) {
+    return allArrayDesc(query)
+      .retryWhen(function (attempts) {
+        return Rx.Observable.range(1, 60).zip(attempts, function (i) { return i; }).flatMap(function (i) {
+          return Rx.Observable.timer(i * 60000);
+        });
+      })
+      .flatMap(function (posts) { return Rx.Observable.from(posts); })
+      .distinct(function (it) { return it.id; });
+  }
   RxParse.allDesc = allDesc;
+
+  function allArrayDesc(query) {
+    var chunkSize = 100;
+    query.descending('createdAt');
+    return find(query).concatMap(function (posts) {
+      if (posts.length == chunkSize) {
+        var q = query.lessThanOrEqualTo('createdAt', posts[posts.length - 1].get('createdAt'));
+        return Rx.Observable.concat(Rx.Observable.just(posts), allArrayDesc(q));
+      } else {
+        return Rx.Observable.just(posts);
+      }
+    });
+  }
+  RxParse.allArrayDesc = allArrayDesc;
 
   /**
    * @param {Parse.Query} query
