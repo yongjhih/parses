@@ -87,24 +87,27 @@ var query = Parse.Query.or(queryPublic, queryFriend);
 // ref. Parse.Query.setACL() https://parse.com/docs/js/api/classes/Parse.Query.html
 // ref. https://parse.com/docs/js/api/classes/Parse.ACL.html
 // https://github.com/Reactive-Extensions/RxJS/blob/master/doc/gettingstarted/errors.md
-Parses.all(query).flatMap(function(it) {
+Parses.all(query).switchMap(function(it) {
   var roleName = it.get('user').id + suffix;
   console.log('user: "' + it.get('user').id + '"');
   console.log('name: "' + roleName + '"');
   var roleQuery = new Parse.Query(Parse.Role);
   roleQuery.equalTo('name', roleName);
   return Parses.first(roleQuery).retryWhen(function (attempts) {
-          return Rx.Observable.range(1, 60).zip(attempts, function (i) { return i; }).flatMap(function (i) {
-            return Rx.Observable.timer(i * 60000);
+          return Rx.Observable.range(1, 60).zip(attempts, function (i) { return i; }).switchMap(function (i) {
+            return Rx.Observable.timer(i * 30000);
           });
-        }).filter(function (role) { return role; }).flatMap(function (role) {
+        }).filter(function (role) { return role; }).switchMap(function (role) {
     console.log('"' + role + '"');
     var acl = it.getACL();
     acl.setRoleWriteAccess(role, true);
     it.setACL(acl);
     return Parses.save(it).retryWhen(function (attempts) {
-      return Rx.Observable.range(1, 60).zip(attempts, function (i) { return i; }).flatMap(function (i) {
-        return Rx.Observable.timer(i * 60000);
+      return Rx.Observable.range(1, 60).zip(attempts, function (i, e) {
+        console.log(e);
+        return i;
+      }).switchMap(function (i) {
+        return Rx.Observable.timer(i * 30000);
       });
     });
   });

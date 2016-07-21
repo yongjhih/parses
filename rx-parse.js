@@ -55,11 +55,11 @@
   function allAsc(query) {
     return allArrayAsc(query)
       .retryWhen(function (attempts) {
-        return Rx.Observable.range(1, 60).zip(attempts, function (i) { return i; }).flatMap(function (i) {
-          return Rx.Observable.timer(i * 60000);
+        return Rx.Observable.range(1, 60).zip(attempts, function (i) { return i; }).switchMap(function (i) {
+          return Rx.Observable.timer(i * 30000);
         });
       })
-      .flatMap(function (posts) { return Rx.Observable.from(posts); })
+      .switchMap(function (posts) { return Rx.Observable.from(posts); })
       .distinct(function (it) { return it.id; });
   }
   RxParse.allAsc = allAsc;
@@ -81,11 +81,11 @@
   function allDesc(query) {
     return allArrayDesc(query)
       .retryWhen(function (attempts) {
-        return Rx.Observable.range(1, 60).zip(attempts, function (i) { return i; }).flatMap(function (i) {
-          return Rx.Observable.timer(i * 60000);
+        return Rx.Observable.range(1, 60).zip(attempts, function (i) { return i; }).switchMap(function (i) {
+          return Rx.Observable.timer(i * 30000);
         });
       })
-      .flatMap(function (posts) { return Rx.Observable.from(posts); })
+      .switchMap(function (posts) { return Rx.Observable.from(posts); })
       .distinct(function (it) { return it.id; });
   }
   RxParse.allDesc = allDesc;
@@ -215,8 +215,8 @@
 
   function importFromFilesRetry(files) {
     return importFromFiles(files).retryWhen(function (attempts) {
-      return Rx.Observable.range(1, 60).zip(attempts, function (i) { return i; }).flatMap(function (i) {
-        return Rx.Observable.timer(i * 60000);
+      return Rx.Observable.range(1, 60).zip(attempts, function (i) { return i; }).switchMap(function (i) {
+        return Rx.Observable.timer(i * 30000);
       });
     });
   }
@@ -235,9 +235,9 @@
         json.className = path.basename(file, '.json');
         return json;
       })
-      .flatMap(function (json) {
+      .switchMap(function (json) {
         return Rx.Observable.from(json.results)
-          .flatMap(function (from) { return saveFromJson(from, json.className); });
+          .switchMap(function (from) { return saveFromJson(from, json.className); });
       });
   }
   RxParse.importFromFiles = importFromFiles;
@@ -253,7 +253,7 @@
         delete json.createdAt;
         delete json.updatedAt;
       })
-      .flatMap(function (json) {
+      .switchMap(function (json) {
         return Parses.save(Parse.Object.fromJSON(json));
       });
   }
