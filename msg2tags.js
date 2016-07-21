@@ -15,7 +15,7 @@ program
   //.option('-i, --info', 'Show info only')
   //.option('-vv, --verbose', 'Show more messages')
   //.option('--years_ago <YEARS_AGO>', 'sync <YEARS_AGO> today 00:00:00 in user\'s timezone')
-  //.option('--days <DAYS>', 'sync <DAYS> from <YEARS_AGO>')
+  .option('-d, --days <days>', 'Process <days> ago until now')
   //.option('--since <SINCE>', 'A Unix timestamp or strtotime data value that points to the start of the range of time-based data')
   //.option('--until <UNTIL>', 'A Unix timestamp or strtotime data value that points to the end of the range of time-based data')
   //.option('--location', 'sync only location posts')
@@ -27,6 +27,7 @@ var appId = program.appId ? program.appId : process.env.APP_ID;
 var jsKey = program.jsKey ? program.jsKey : process.env.JS_KEY;
 var masterKey = program.masterKey ? program.masterKey : process.env.MASTER_KEY;
 var user = program.user ? program.user : process.env.PARSE_USER;
+var days = program.days;
 
 var configPath = program.config ? program.config : process.env.HOME + '/.parse/' + 'config.json'; // $ docker-parse list 8tory_dev
 var config = hasFile(configPath) ? require(configPath) : null;
@@ -75,12 +76,18 @@ var query = new Parse.Query("Post");
 query.equalTo("source", "Fb");
 query.notEqualTo("message", "");
 query.include('tagList');
+if (days) {
+  query.ascending('createdAt');
+  var daysAgo = new Date();
+  daysAgo.setDate(daysAgo.getDate() - days);
+  query.greaterThanOrEqualTo('createdAt', daysAgo);
+}
 
-var allObs = Parses.all(query);
+var allObs = Parses.allAsc(query);
 if (user) {
   allObs = Parses.get(new Parse.Query(Parse.User), user).flatMap(function (user) {
     query.equalTo('user', user);
-    return Parses.all(query);
+    return Parses.allAsc(query);
   });
 }
 
@@ -113,7 +120,9 @@ allObs.concatMap(function (post) {
     return Parses.save(post);
   }) : Rx.Observable.empty();
 }).doOnNext(function (post) {
-}).subscribe(function (it) {}, function (e) { console.log(e); });
+}).subscribe(function (it) {
+  console.log(it.get('createdAt'));
+}, function (e) { console.log(e); });
 
 function hasFile(f) {
   var fs = require('fs');
