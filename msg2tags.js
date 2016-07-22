@@ -20,7 +20,7 @@ program
   //.option('--until <UNTIL>', 'A Unix timestamp or strtotime data value that points to the end of the range of time-based data')
   //.option('--location', 'sync only location posts')
   .option('-u, --user <USER>', 'Specifiy user id')
-  .option('-S, --noSkip', 'Skip existing tags of post')
+  .option('-S, --noSkip', 'Dont skip existing tags of post')
   .option('-f, --config <config>', 'Specifiy config path')
   .parse(process.argv);
 
