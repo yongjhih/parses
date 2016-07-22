@@ -27,8 +27,10 @@ Before:
 ```js
 var query = new Parse.Query("User");
 
-all(query, 128).then(function(list) {
-  console.log(list);
+all(query, 128).then(function(users) {
+  for (var i = 0; i < users.length; i++) {
+      console.log(users[i].get('email'));
+  }
 });
 
 function all(query, limit) { // It's sync/blocking until collected due to limit
