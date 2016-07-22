@@ -27,6 +27,42 @@ Before:
 ```js
 var query = new Parse.Query("User");
 
+all(query).then(function(users) {
+  for (var i = 0; i < users.length && i < 128; i++) {
+      console.log(users[i].get('email'));
+  }
+});
+
+function all(query) { // It's sync/blocking until collected all objects
+  var promise = new Parse.Promise();
+
+  query.descending('createdAt');
+  var list = [];
+  var _all = function (_query) {
+    _query.find().then(function (_list) {
+      list = list.concat(_list);
+      if (_list.length < 100) {
+        promise.resolve(list);
+        return;
+      }
+      _query.lessThanOrEqualTo('createdAt', _list[_list.length - 1].createdAt);
+      _all(_query);
+    }, function (e) {
+      promise.reject(e);
+    });
+  };
+
+  _all(query);
+
+  return promise;
+}
+```
+
+Better but still blocking:
+
+```js
+var query = new Parse.Query("User");
+
 all(query, 128).then(function(users) {
   for (var i = 0; i < users.length; i++) {
       console.log(users[i].get('email'));
