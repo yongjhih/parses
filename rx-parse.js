@@ -47,13 +47,13 @@
   }
   RxParse.all = all;
 
-  function allArray(query) {
-    return allArrayDesc(query);
+  function allAsArray(query) {
+    return allAsArrayDesc(query);
   }
-  RxParse.allArray = allArray;
+  RxParse.allAsArray = allAsArray;
 
   function allAsc(query) {
-    return allArrayAsc(query)
+    return allAsArrayAsc(query)
       .retryWhen(function (attempts) {
         return Rx.Observable.range(1, 60).zip(attempts, function (i) { return i; }).switchMap(function (i) {
           return Rx.Observable.timer(i * 30000);
@@ -64,22 +64,22 @@
   }
   RxParse.allAsc = allAsc;
 
-  function allArrayAsc(query) {
+  function allAsArrayAsc(query) {
     var chunkSize = 100;
     query.ascending('createdAt');
     return find(query).concatMap(function (posts) {
       if (posts.length == chunkSize) {
         var q = query.greaterThanOrEqualTo('createdAt', posts[posts.length - 1].get('createdAt'));
-        return Rx.Observable.concat(Rx.Observable.just(posts), allArrayAsc(q));
+        return Rx.Observable.concat(Rx.Observable.just(posts), allAsArrayAsc(q));
       } else {
         return Rx.Observable.just(posts);
       }
     });
   }
-  RxParse.allArrayAsc = allArrayAsc;
+  RxParse.allAsArrayAsc = allAsArrayAsc;
 
   function allDesc(query) {
-    return allArrayDesc(query)
+    return allAsArrayDesc(query)
       .retryWhen(function (attempts) {
         return Rx.Observable.range(1, 60).zip(attempts, function (i) { return i; }).switchMap(function (i) {
           return Rx.Observable.timer(i * 30000);
@@ -90,19 +90,19 @@
   }
   RxParse.allDesc = allDesc;
 
-  function allArrayDesc(query) {
+  function allAsArrayDesc(query) {
     var chunkSize = 100;
     query.descending('createdAt');
     return find(query).concatMap(function (posts) {
       if (posts.length == chunkSize) {
         var q = query.lessThanOrEqualTo('createdAt', posts[posts.length - 1].get('createdAt'));
-        return Rx.Observable.concat(Rx.Observable.just(posts), allArrayDesc(q));
+        return Rx.Observable.concat(Rx.Observable.just(posts), allAsArrayDesc(q));
       } else {
         return Rx.Observable.just(posts);
       }
     });
   }
-  RxParse.allArrayDesc = allArrayDesc;
+  RxParse.allAsArrayDesc = allAsArrayDesc;
 
   /**
    * @param {Parse.Query} query
