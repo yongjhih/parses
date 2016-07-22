@@ -20,6 +20,7 @@ program
   //.option('--until <UNTIL>', 'A Unix timestamp or strtotime data value that points to the end of the range of time-based data')
   //.option('--location', 'sync only location posts')
   .option('-u, --user <USER>', 'Specifiy user id')
+  .option('-S, --noSkip', 'Skip existing tags of post')
   .option('-f, --config <config>', 'Specifiy config path')
   .parse(process.argv);
 
@@ -28,6 +29,7 @@ var jsKey = program.jsKey ? program.jsKey : process.env.JS_KEY;
 var masterKey = program.masterKey ? program.masterKey : process.env.MASTER_KEY;
 var user = program.user ? program.user : process.env.PARSE_USER;
 var days = program.days;
+var noSkip = program.noSkip;
 
 var configPath = program.config ? program.config : process.env.HOME + '/.parse/' + 'config.json'; // $ docker-parse list 8tory_dev
 var config = hasFile(configPath) ? require(configPath) : null;
@@ -81,6 +83,9 @@ if (days) {
   var daysAgo = new Date();
   daysAgo.setDate(daysAgo.getDate() - days);
   query.greaterThanOrEqualTo('createdAt', daysAgo);
+}
+if (!noSkip) {
+  query.doesNotExist('tagList');
 }
 
 var allObs = Parses.allAsc(query);
