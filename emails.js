@@ -79,7 +79,18 @@ if (days) {
   query.greaterThanOrEqualTo('createdAt', daysAgo);
 }
 
-Parses.allAsc(query).doOnNext(function(user) {
+Parses.allAsc(query).distinct(function (it) { return it.id; }).flatMap(function (it) {
+  var adds = ['test', 'test2'];
+  var from = it.get('tagList');
+  console.log(from);
+  for (var i = 0; i < adds.length; ++i) {
+    if (!~from.indexOf(adds[i])) it.addUnique('tagList', adds[i]); // addUnique(key, item)
+  }
+  var to = it.get('tagList');
+  console.log(to);
+  console.log(it.dirty());
+  return Rx.Observable.just(it);
+}).doOnNext(function(user) {
   console.log(user.get('email'));
 }).subscribe(function (it) {
   console.log(it.get('createdAt'));
