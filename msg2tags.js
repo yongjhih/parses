@@ -121,7 +121,7 @@ allObs.concatMap(function (post) {
   .toArray()
   .filter(function (tags) { return tags.length > 0; })
   .concatMap(function (tags) {
-    var from = it.get('tagList');
+    var from = post.get('tagList');
     for (var i = 0; i < tags.length; i++) {
       if (!~from.indexOf(tags[i])) post.addUnique('tagList', tags[i]); // addUnique(key, item)
     }
