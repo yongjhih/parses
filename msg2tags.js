@@ -123,7 +123,7 @@ allObs.concatMap(function (post) {
   .concatMap(function (tags) {
     var from = post.get('tagList');
     for (var i = 0; i < tags.length; i++) {
-      if (!~from.indexOf(tags[i])) post.addUnique('tagList', tags[i]); // addUnique(key, item)
+      if (!from || !~from.indexOf(tags[i])) post.addUnique('tagList', tags[i]); // addUnique(key, item)
     }
     return post.dirty() ? Parses.save(post) : Rx.Observable.just(post);
   }) : Rx.Observable.empty();
