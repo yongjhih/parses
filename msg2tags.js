@@ -11,6 +11,7 @@ program
   .option('-a, --appId <appId>', 'appId')
   .option('-j, --jsKey <jsKey>', 'jsKey')
   .option('-m, --masterKey <masterKey>', 'masterKey')
+  .option('-s, --serverURL <serverURL>', 'serverURL')
   //.option('-d, --debug', 'Show debug messages')
   //.option('-i, --info', 'Show info only')
   //.option('-vv, --verbose', 'Show more messages')
@@ -27,6 +28,7 @@ program
 var appId = program.appId ? program.appId : process.env.APP_ID;
 var jsKey = program.jsKey ? program.jsKey : process.env.JS_KEY;
 var masterKey = program.masterKey ? program.masterKey : process.env.MASTER_KEY;
+var serverURL = program.serverURL ? program.serverURL : process.env.SERVER_URL;
 var user = program.user ? program.user : process.env.PARSE_USER;
 var days = program.days;
 var noSkip = program.noSkip;
@@ -39,10 +41,12 @@ if (config) {
     appId     = appId ? appId : config.production.appId;
     jsKey     = jsKey ? jsKey : config.production.jsKey;
     masterKey = masterKey ? masterKey : config.production.masterKey;
+    serverURL = serverURL ? serverURL : config.production.serverURL;
   } else {
     appId     = appId ? appId : config.dev.appId;
     jsKey     = jsKey ? jsKey : config.dev.jsKey;
     masterKey = masterKey ? masterKey : config.dev.masterKey;
+    serverURL = serverURL ? serverURL : config.dev.serverURL;
   }
 } else {
   console.warn('missing ' + configPath);
@@ -54,6 +58,7 @@ if (!jsKey) console.error('missing jsKey');
 if (!masterKey) console.error('missing masterKey');
 
 Parse.initialize(appId, jsKey, masterKey);
+if (serverURL) Parse.serverURL = serverURL;
 
 if (masterKey) Parse.Cloud.useMasterKey();
 
